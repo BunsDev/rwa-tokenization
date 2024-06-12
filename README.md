@@ -54,6 +54,33 @@ We can tokenize real world assets by combining any of the following traits:
 
 ---
 
+# Variants of Tokenized Real Estate (TRE)
+
+- **Simple TRE**
+  1. Ownership (of the NFT) is equivalent to owning the property.
+  2. Transferring it marks property ownership change.
+  3. NFT can hold critical data such as past sales, address, and more.
+
+- **Dynamic TRE**
+  1. Ownership (of the NFT) is equivalent to owning the property.
+  2. Transferring it marks property ownership change.
+  3. NFT can hold -- and **automatically update** -- critical data such as past sales, address, and more.
+
+- **Fractionalized TRE**
+  - Tokens represent a percentage of property ownership.
+  - Owning all fungible tokens equates to owning the property.
+
+- **TRE Cash Flows**
+  - Seperation of property ownership and rights to cash flow.
+  - Rights to cash flow represented as an NFT.
+  - Automatic redirection of cash flow to the NFT owner.
+
+- **TRE Baskets**
+  - Fungible tokens collectively representing all properties and cash flows.
+  - Automated cash can flow back to token owners.
+
+---
+
 # Resources
 
 - [Chainlink Blog: RWA Explained](https://blog.chain.link/real-world-assets-rwas-explained/)
@@ -61,3 +88,7 @@ We can tokenize real world assets by combining any of the following traits:
 - [Education Hub: Tokenized Real Estate](https://chain.link/education-hub/tokenized-real-estate)
 
 - [Bridge Interactive Data](https://bridgedataoutput.com/docs/explorer/reso-web-api#oShowProperty)
+
+- [How to: Tokenize an Asset](https://chain.link/education-hub/how-to-tokenize-an-asset)
+
+- [What is Tokenized Real Estate?](https://chain.link/education-hub/tokenized-real-estate)
