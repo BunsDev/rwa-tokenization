@@ -21,7 +21,7 @@ import { FunctionsSource } from "./FunctionsSource.sol";
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
 
-contract RealEstateNFT is 
+contract RealEstateAsset is 
     ERC721, ERC721URIStorage, ERC721Burnable, 
     FunctionsClient, 
     ReentrancyGuard, Ownable(msg.sender) {
