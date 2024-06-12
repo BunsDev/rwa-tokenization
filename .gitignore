@@ -11,7 +11,7 @@ out/
 /broadcast/**/dry-run/
 
 # Docs
-docs/
+# docs/
 
 # Environment Variables
 .env

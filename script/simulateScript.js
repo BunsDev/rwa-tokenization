@@ -11,5 +11,5 @@ async function main() {
     console.log(761167 * 100001272);
 }
 
-// node scripts/Simulate.js
+// node scripts/simulateScript.js
 main();

@@ -11,6 +11,6 @@
     "@chainlink/functions-toolkit": "^0.2.8"
   },
   "scripts": {
-    "simulate": "node scripts/simulateScript.js"
+    "simulate": "node script/simulateScript.js"
   }
 }
