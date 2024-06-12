@@ -1,0 +1,17 @@
+{
+  "name": "rwa-tokenization-contracts",
+  "version": "1.0.0",
+  "description": "RWA tokenization using Chainlink Function on Avalanche.",
+  "main": "index.js",
+  "repository": "https://github.com/BunsDev/rwa-asset-tokenization.git",
+  "author": "Buns Enchantress <bunsthedev@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@chainlink/env-enc": "^1.0.5",
+    "@chainlink/functions-toolkit": "^0.2.8"
+  },
+  "scripts": {
+    "test": "forge test -vv",
+    "simulate": "node script/simulateScript.js"
+  }
+}
