@@ -45,3 +45,5 @@ We can tokenize real world assets by combining any of the following traits:
 - [Chainlink Blog: RWA Explained](https://blog.chain.link/real-world-assets-rwas-explained/)
 
 - [Education Hub: Tokenized Real Estate](https://chain.link/education-hub/tokenized-real-estate)
+
+- [Bridge Interactive Data](https://bridgedataoutput.com/docs/explorer/reso-web-api#oShowProperty)

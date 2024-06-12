@@ -13,7 +13,7 @@ clean  :; forge clean
 remove :; rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gitmodules && git add . && git commit -m "modules"
 
 # Install Libs
-install :; forge install https://github.com/smartcontractkit/ccip lib/ccip --no-commit && forge install https://github.com/smartcontractkit/chainlink lib/chainlink --no-commit && forge install https://github.com/smartcontractkit/chainlink-local lib/chainlink-local --no-commit && forge install https://github.com/foundry-rs/forge-std lib/forge-std --no-commit && forge install https://github.com/lib/openzeppelin-contracts lib/openzeppelin-contracts --no-commit
+install :; forge install https://github.com/smartcontractkit/ccip lib/ccip --no-commit && forge install https://github.com/smartcontractkit/chainlink lib/chainlink --no-commit && forge install https://github.com/smartcontractkit/chainlink-local lib/chainlink-local --no-commit && forge install https://github.com/foundry-rs/forge-std lib/forge-std --no-commit && forge install https://github.com/OpenZeppelin/openzeppelin-contracts lib/openzeppelin-contracts --no-commit
 # cyfrin/foundry-devops --no-commit && forge install smartcontractkit/chainlink-brownie-contracts@0.8.0 --no-commit && forge install foundry-rs/forge-std --no-commit && forge install openzeppelin/openzeppelin-contracts --no-commit
 
 # Update Dependencies
