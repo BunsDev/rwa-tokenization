@@ -1,9 +1,6 @@
 # Dependencies
 node_modules
 
-# Environment Variables
-.env
-
 # Compiler files
 cache/
 out/
@@ -15,3 +12,8 @@ out/
 
 # Docs
 docs/
+
+# Environment Variables
+.env
+.env.local
+.env.enc
