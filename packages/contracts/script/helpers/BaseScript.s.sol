@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.6.2 <0.9.0;
 
-import "forge-std/src/Script.sol";
-import { VmSafe } from "forge-std/src/Vm.sol";
+import "forge-std/Script.sol";
+import { VmSafe } from "forge-std/Vm.sol";
 
 contract BaseScript is Script {
   /// @notice Manages the broadcast context for nested script calls.
