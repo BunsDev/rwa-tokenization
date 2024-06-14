@@ -92,3 +92,5 @@ We can tokenize real world assets by combining any of the following traits:
 - [How to: Tokenize an Asset](https://chain.link/education-hub/how-to-tokenize-an-asset)
 
 - [What is Tokenized Real Estate?](https://chain.link/education-hub/tokenized-real-estate)
+
+- [Cyfrin: What Are Tokenized Assets?](https://www.cyfrin.io/blog/what-are-tokenized-assets-crypto-rwas-explained)
