@@ -25,14 +25,7 @@ const requestConfig = {
     },
 
     // args (array[""]): source code accesses via `args[index]`.
-    args: [
-        "bitcoin",          // token id             [0]
-        "d1",               // interval             [1]
-        "6",                // precision            [2]
-        "naive",            // forecast method      [3]
-        "30",               // historical days      [4]
-        ],
-        
+    args: ["0"],       
         
     // shows: expected type of the returned value.
     expectedReturnType: ReturnType.bytes,
