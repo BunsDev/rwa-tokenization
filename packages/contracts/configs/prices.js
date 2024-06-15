@@ -5,7 +5,7 @@ const { Location, ReturnType, CodeLanguage } = require("@chainlink/functions-too
 require("@chainlink/env-enc").config()
 
 // configures request: via settings in the fields below
-const requestConfig = {
+const priceConfig = {
 
     // source code location (inline only)
     codeLocation: Location.Inline,
@@ -17,7 +17,7 @@ const requestConfig = {
     // secretsLocation: Location.DONHosted,
 
     // source code to be executed
-    source: fs.readFileSync("requests/getPrices.js").toString(),
+    source: fs.readFileSync("requests/prices.js").toString(),
 
     // (optional) accessed within the source code with `secrets.varName` (ie: secrets.apiKey), must be a string.
     secrets: { 
@@ -40,4 +40,4 @@ const requestConfig = {
     secretsURLs: [],
 }
 
-module.exports = requestConfig
+module.exports = priceConfig
