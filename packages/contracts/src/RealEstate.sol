@@ -74,7 +74,12 @@ contract RealEstate is
     /*/ RWA Tokenization Functionality /*/
     
     // assigns: requestId to a given recipient, which includes a request that pulls NFT metadata.
-    function issue(address recipientAddress, uint64 subscriptionId, uint32 gasLimit, bytes32 donID)
+    function issue(
+        address recipientAddress, 
+        uint64 subscriptionId,
+        uint32 gasLimit,
+        bytes32 donID
+    )
         external
         onlyOwner
         returns (bytes32 requestId)
@@ -140,7 +145,11 @@ contract RealEstate is
         // [if] asset is requested for the first time.
         if (s_lastRequestId == requestId) {
             // [then] decode: response to get property details.
-            (string memory realEstateAddress, uint yearBuilt, uint lotSizeSquareFeet) =
+            (
+                string memory realEstateAddress, 
+                uint yearBuilt, 
+                uint lotSizeSquareFeet
+            ) =
                 abi.decode(response, (string, uint, uint));
             
             // [then] increment: `tokenId`
