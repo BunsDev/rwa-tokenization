@@ -15,13 +15,13 @@ contract RealEstateTest is BaseTest {
     address public alice;
     address public chainlinkAutomationForwarder;
 
-    uint256 constant AVALANCHE_FUJI_CHAIN_ID = 421614;
+    uint public constant AVAX_FUJI_CHAIN_ID = 43113;
 
   event SubscriptionCreated(uint64 indexed subscriptionId, address owner);
-  event SubscriptionFunded(uint64 indexed subscriptionId, uint256 oldBalance, uint256 newBalance);
+  event SubscriptionFunded(uint64 indexed subscriptionId, uint oldBalance, uint newBalance);
 //   event SubscriptionConsumerAdded(uint64 indexed subscriptionId, address consumer);
 //   event SubscriptionConsumerRemoved(uint64 indexed subscriptionId, address consumer);
-//   event SubscriptionCanceled(uint64 indexed subscriptionId, address fundsRecipient, uint256 fundsAmount);
+//   event SubscriptionCanceled(uint64 indexed subscriptionId, address fundsRecipient, uint fundsAmount);
 //   event SubscriptionOwnerTransferRequested(uint64 indexed subscriptionId, address from, address to);
 //   event SubscriptionOwnerTransferred(uint64 indexed subscriptionId, address from, address to);
 
@@ -38,7 +38,7 @@ contract RealEstateTest is BaseTest {
             new RealEstate(address(functionsRouter), address(linkToken));
 
         console.log(block.chainid);
-        vm.chainId(AVALANCHE_FUJI_CHAIN_ID);
+        vm.chainId(AVAX_FUJI_CHAIN_ID);
         console.log(block.chainid);
     }
 

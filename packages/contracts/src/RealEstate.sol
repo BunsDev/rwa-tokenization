@@ -37,7 +37,6 @@ contract RealEstate is
     mapping(bytes32 requestId => address to) internal s_issueTo;
     mapping(uint tokenId => PriceDetails) internal s_priceDetails;
 
-
     uint private _nextTokenId;
 
     enum PayFeesIn {
@@ -184,15 +183,20 @@ contract RealEstate is
         s_automationForwarderAddress = automationForwarderAddress;
     }
 
-    // ERC721 Functionality //
+    /*/ ERC721 Functionality /*/
     
     // gets: tokenURI for a given `tokenId`
-    function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) 
+        returns (
+            string memory
+        ) {
         return super.tokenURI(tokenId);
     }
     
     // checks: interface is supported by this contract.
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (
+        bool
+    ) {
         return super.supportsInterface(interfaceId);
     }
 
