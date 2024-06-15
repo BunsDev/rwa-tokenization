@@ -17,7 +17,7 @@ const priceConfig = {
     // secretsLocation: Location.DONHosted,
 
     // source code to be executed
-    source: fs.readFileSync("requests/price.js").toString(),
+    source: fs.readFileSync("requests/prices.js").toString(),
 
     // (optional) accessed within the source code with `secrets.varName` (ie: secrets.apiKey), must be a string.
     secrets: { 

@@ -26,8 +26,6 @@ contract BaseTest is Test {
     // BaseTest.setUp is often called multiple times from tests' setUp due to inheritance.
     if (s_baseTestInitialized) return;
     s_baseTestInitialized = true;
-    // silences: error.
-    console.log("");
   }
 }
 

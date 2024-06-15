@@ -6,7 +6,7 @@ require("@chainlink/env-enc").config();
 
 const sendRequest = async () => {
     // @dev Update this to point to your desired request config file.
-    const requestConfigPath = path.join(process.cwd(), "configs/price.js") 
+    const requestConfigPath = path.join(process.cwd(), "configs/prices.js") 
     console.log(`Using Functions request config file ${requestConfigPath}\n`)
     const requestConfig = require(requestConfigPath);
 
