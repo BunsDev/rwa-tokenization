@@ -22,8 +22,8 @@
 
 Clone the repo, navigate to the directory, and install dependencies with `make`
 ```
-git clone https://github.com/BunsDev/rwa-asset-tokenization
-cd rwa-asset-tokenization
+git clone https://github.com/BunsDev/rwa-tokenization
+cd rwa-tokenization
 make
 ```
 
@@ -50,7 +50,6 @@ We can tokenize real world assets by combining any of the following traits:
 <img src="./img/tokenized-assets.svg" width="700" alt="tokenized-assets">
 </p>
 <br/>
-
 
 ---
 
