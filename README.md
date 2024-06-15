@@ -22,8 +22,8 @@
 
 Clone the repo, navigate to the directory, and install dependencies with `make`
 ```
-git clone https://github.com/BunsDev/rwa-asset-tokenization
-cd rwa-asset-tokenization
+git clone https://github.com/BunsDev/rwa-tokenization
+cd rwa-tokenization
 make
 ```
 
@@ -50,7 +50,6 @@ We can tokenize real world assets by combining any of the following traits:
 <img src="./img/tokenized-assets.svg" width="700" alt="tokenized-assets">
 </p>
 <br/>
-
 
 ---
 
@@ -92,3 +91,5 @@ We can tokenize real world assets by combining any of the following traits:
 - [How to: Tokenize an Asset](https://chain.link/education-hub/how-to-tokenize-an-asset)
 
 - [What is Tokenized Real Estate?](https://chain.link/education-hub/tokenized-real-estate)
+
+- [Cyfrin: What Are Tokenized Assets?](https://www.cyfrin.io/blog/what-are-tokenized-assets-crypto-rwas-explained)
