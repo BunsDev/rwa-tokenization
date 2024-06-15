@@ -1,2 +1,2 @@
 exports.metadataRequest = require("./metadata");
-exports.priceRequest = require("./price");
+exports.priceRequest = require("./prices");

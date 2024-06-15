@@ -1,1 +1,2 @@
-exports.priceConfig = require("./price.js");
+exports.metadataConfig = require("./metadata.js");
+exports.priceConfig = require("./prices.js");
