@@ -66,12 +66,12 @@ contract RealEstate is
     constructor(
         address functionsRouterAddress,
         address linkTokenAddress
-    ) ERC721("Tokenized Real Estate", "RealEstateNFT") FunctionsClient(functionsRouterAddress) {
+    ) ERC721("Tokenized Real Estate", "tRE") FunctionsClient(functionsRouterAddress) {
         i_functionsSource = new FunctionsSource();
         i_linkToken = LinkTokenInterface(linkTokenAddress);
     }
 
-    // RWA Tokenization Functionality //
+    /*/ RWA Tokenization Functionality /*/
     
     // assigns: requestId to a given recipient, which includes a request that pulls NFT metadata.
     function issue(address recipientAddress, uint64 subscriptionId, uint32 gasLimit, bytes32 donID)
@@ -94,6 +94,7 @@ contract RealEstate is
         return s_priceDetails[tokenId];
     }
 
+    // upates: associated price details for a given `tokenId`.
     function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit, bytes32 donID)
         external
         onlyAutomationForwarder
@@ -119,6 +120,7 @@ contract RealEstate is
         if (!sent) revert FailedToWithdrawEth(msg.sender, _beneficiary, amount);
     }
 
+    // sends: token balance stored in the contract (onlyOwner).
     function withdrawToken(address _beneficiary, address _token) public onlyOwner {
         uint amount = IERC20(_token).balanceOf(address(this));
 
@@ -129,14 +131,21 @@ contract RealEstate is
 
     // FunctionsClient Functionality //
 
-    // 
-    function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
+    // updates: `s_lastRequestId` and fulfills the request.
+    function fulfillRequest(
+        bytes32 requestId, 
+        bytes memory response, 
+        bytes memory /* err */
+    ) internal override {
+        // [if] asset is requested for the first time.
         if (s_lastRequestId == requestId) {
+            // [then] decode: response to get property details.
             (string memory realEstateAddress, uint yearBuilt, uint lotSizeSquareFeet) =
                 abi.decode(response, (string, uint, uint));
-            // increments: `tokenId`
+            
+            // [then] increment: `tokenId`
             uint tokenId = _nextTokenId++;
-            // creates URI: with property details.
+            // [then] create URI: with property details.
             string memory uri = Base64.encode(
                 bytes(
                     string(
@@ -161,14 +170,18 @@ contract RealEstate is
                     )
                 )
             );
+            // [then] create: finalTokenURI: with metadata.
             string memory finalTokenURI = string(abi.encodePacked("data:application/json;base64,", uri));
-            // mints: `tokenId` to the associated `issueTo` for a given `requestId`.
+            // [then] mint: `tokenId` to the associated `issueTo` for a given `requestId`.
             _safeMint(s_issueTo[requestId], tokenId);
+            // [then] set: tokenURI for a given `tokenId`, containing metadata.
             _setTokenURI(tokenId, finalTokenURI);
+
+        // [else] update the price details for a given `tokenId`. 
         } else {
             (uint tokenId, uint listPrice, uint originalListPrice, uint taxAssessedValue) =
                 abi.decode(response, (uint, uint, uint, uint));
-
+            // map: price details to the associated `tokenId`.
             s_priceDetails[tokenId] = 
                 PriceDetails({
                     listPrice: uint80(listPrice),
@@ -184,8 +197,8 @@ contract RealEstate is
     }
 
     /*/ ERC721 Functionality /*/
-    
-    // gets: tokenURI for a given `tokenId`
+
+    // gets: tokenURI for a given `tokenId`.
     function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) 
         returns (
             string memory
