@@ -1,8 +1,9 @@
 const { simulateScript } = require("@chainlink/functions-toolkit");
-const requestConfig = require('../requests/config');
+const requestConfig = require('../configs/priceConfig');
 
 async function main() {
-    const { responseBytesHexstring, capturedTerminalOutput, errorString } = await simulateScript(requestConfig);
+    const { responseBytesHexstring, capturedTerminalOutput, errorString } 
+        = await simulateScript(requestConfig);
 
     console.log(responseBytesHexstring);
     console.log(errorString)
