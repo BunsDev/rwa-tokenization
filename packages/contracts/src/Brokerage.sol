@@ -13,20 +13,20 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 // Brokerage firm that manages real estate houses.
 contract Brokerage is IBrokerage, Ownable(msg.sender) {
-    bytes32 public constant INIT_CODE_PAIR_HASH 
+    bytes32 public immutable INIT_CODE_PAIR_HASH 
         = keccak256(abi.encodePacked(type(RealEstate).creationCode));
 
     uint private _totalHouses;
     address[] public houses;
     mapping(address => uint[]) public housesByOwner;
 
-    // network-specific settings // todo: verify && update.
-    bytes32 public DON_ID = bytes32(0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000);
-    address public LINK_ADDRESS = address(0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846);
-    address public FUNCTIONS_ROUTER_ADDRESS = address(0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0);
-    uint32 public GAS_LIMIT = 300_000;
+    // network-specific settings (todo verify)
+    bytes32 public immutable DON_ID = bytes32(0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000);
+    address public immutable LINK_ADDRESS = address(0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846);
+    address public immutable FUNCTIONS_ROUTER_ADDRESS = address(0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0);
+    uint32 public immutable GAS_LIMIT = 300_000;
 
-    // creates: Houses struct (strictly immutable variables).
+    // creates: Houses struct (immutable variables).
     struct Houses {
         address houseAddress;
         address homeownerAddress;
