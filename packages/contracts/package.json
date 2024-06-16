@@ -6,14 +6,39 @@
   "repository": "https://github.com/BunsDev/rwa-asset-tokenization.git",
   "author": "Buns Enchantress <bunsthedev@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "@chainlink/env-enc": "^1.0.5",
-    "@chainlink/functions-toolkit": "^0.2.8",
-    "ethers": "^6.13.0"
-  },
   "scripts": {
     "test": "forge test -vv",
     "prices": "node script/getPrices.js",
-    "metadata": "node script/getMetadata.js"
-  }
+    "metadata": "node script/getMetadata.js",
+    "deploy": "forge script script/Brokerage.s.sol:BrokerageScript --rpc-url https://rpc.ankr.com/avalanche_fuji --broadcast --verify",
+    "set:pw": "npx env-enc set-pw",
+    "set:env": "npx env-enc set",
+    "subscribe": "npx hardhat func-sub-create --network avalancheFuji --amount 5 --contract <CONTRACT_ADDRESS>",
+    "request": "npx hardhat func-request --network avalancheFuji --contract <CONTRACT_ADDRESS> --subid <SUB_ID>",
+    "read": "npx hardhat func-read --network avalancheFuji --contract <CONTRACT_ADDRESS>",
+    "flat": "forge flatten --output src/flats/Brokerage.sol src/Brokerage.sol "
+    },
+    "dependencies": {
+      "@chainlink/env-enc": "^1.0.5",
+      "@chainlink/functions-toolkit": "^0.2.8",
+      "ethers": "^6.13.0"
+    },
+    "devDependencies": {
+      "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
+      "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
+      "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+      "@nomicfoundation/hardhat-ethers": "^3.0.5",
+      "@nomicfoundation/hardhat-foundry": "^1.1.1",
+      "@nomiclabs/hardhat-ethers": "^2.2.2",
+      "@nomiclabs/hardhat-etherscan": "^3.1.0",
+      "@typechain/ethers-v5": "^10.1.0",
+      "@typechain/hardhat": "^9.1.0",
+      "chai": "^4.3.6",
+      "hardhat": "^2.22.2",
+      "hardhat-contract-sizer": "^2.6.1",
+      "hardhat-gas-reporter": "^2.1.0",
+      "ora": "5.4.1",
+      "solidity-coverage": "^0.8.2",
+      "typechain": "^8.3.2"
+    }
 }
