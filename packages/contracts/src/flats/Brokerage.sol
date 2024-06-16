@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0 ^0.8.19 ^0.8.20 ^0.8.4;
+pragma solidity ^0.8.20;
 
 // lib/chainlink/contracts/src/v0.8/functions/v1_0_0/interfaces/IFunctionsClient.sol
 
