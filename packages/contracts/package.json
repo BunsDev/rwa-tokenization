@@ -10,12 +10,12 @@
     "test": "forge test -vv",
     "prices": "node script/getPrices.js",
     "metadata": "node script/getMetadata.js",
-    "deploy": "forge script script/Brokerage.s.sol:BrokerageScript --rpc-url https://rpc.ankr.com/avalanche_fuji --broadcast --verify",
+    "deploy": "forge script script/Brokerage.s.sol:BrokerageScript --rpc-url https://rpc.ankr.com/avalanche_fuji --broadcast --verifier-url 'https://api.routescan.io/v2/network/mainnet/evm/43114/etherscan' --etherscan-api-key 'verifyContract'",
     "set:pw": "npx env-enc set-pw",
     "set:env": "npx env-enc set",
-    "subscribe": "npx hardhat func-sub-create --network avalancheFuji --amount 5 --contract <CONTRACT_ADDRESS>",
-    "request": "npx hardhat func-request --network avalancheFuji --contract <CONTRACT_ADDRESS> --subid <SUB_ID>",
-    "read": "npx hardhat func-read --network avalancheFuji --contract <CONTRACT_ADDRESS>",
+    "subscribe": "npx hardhat func-sub-create --network avalancheFuji --amount 5 --contract 0x0cd2E31eb378110DDD62778E136ba664A624b1CA",
+    "request": "npx hardhat func-request --network avalancheFuji --contract 0x0cd2E31eb378110DDD62778E136ba664A624b1CA --subid <SUB_ID>",
+    "read": "npx hardhat func-read --network avalancheFuji --contract 0x0cd2E31eb378110DDD62778E136ba664A624b1CA",
     "flat": "forge flatten --output src/flats/Brokerage.sol src/Brokerage.sol "
     },
     "dependencies": {

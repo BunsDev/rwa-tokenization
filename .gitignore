@@ -7,6 +7,7 @@ out/
 
 # Development Broadcast Logs
 !/broadcast
+broadcast
 /broadcast/*/31337/
 /broadcast/**/dry-run/
 

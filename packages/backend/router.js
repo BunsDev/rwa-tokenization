@@ -10,7 +10,8 @@ const houses = require('./api/houses');
 
 // houses //
 router.get('/houses', houses.infos);
-router.get('/houses/addresses/:address', houses.houseInfo);
+router.get('/brokerage/:address', houses.houseBrokerageInfo);
+router.get('/house/:id', houses.houseInfo);
 
 router.get('/', noop);
 
