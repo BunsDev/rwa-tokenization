@@ -11,7 +11,7 @@
     "prices": "node script/getPrices.js",
     "metadata": "node script/getMetadata.js",
     "deploy": "forge script script/RealEstate.s.sol:RealEstateScript --rpc-url https://rpc.ankr.com/avalanche_fuji --broadcast --verifier-url https://api.routescan.io/v2/network/testnet/evm/43113/etherscan --etherscan-api-key verifyContract",
-    "pw": "npx env-enc set-pw",
+    "signin": "npx env-enc set-pw",
     "setup": "npx env-enc set",
     "flat": "forge flatten --output src/flats/RealEstate.sol src/RealEstate.sol",
 

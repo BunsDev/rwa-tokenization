@@ -24,7 +24,7 @@ yarn
 #### Create Password
 Chainlink Functions enables you to securely share secrets with the DON. Secrets are encrypted with a password.
 ```
-yarn pw
+yarn signin
 ```
 Once the ecrpytion key is created with your desired password, you can safely share your secrets with the DON, which requires multiple nodes to decrypt with consensus.
 

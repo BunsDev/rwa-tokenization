@@ -18,13 +18,13 @@ console.log(`Lot Size Square Feet: ${squareFootage}`);
 // console.log(`Bedrooms: ${bedrooms}`);
 
 const encoded = abiCoder.encode([
-    `string`, 
-    `uint256`, 
+    `string`,
+    `uint256`,
     `uint256`
-        // ,`uint256`
+    // ,`uint256`
 ], [
-    homeAddress, 
-    yearBuilt, 
+    homeAddress,
+    yearBuilt,
     squareFootage
     //  ,bedrooms
 ]

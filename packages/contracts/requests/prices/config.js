@@ -17,7 +17,7 @@ const priceConfig = {
     // secretsLocation: Location.DONHosted,
 
     // source code to be executed
-    source: fs.readFileSync("requests/prices.js").toString(),
+    source: fs.readFileSync("requests/prices/index.js").toString(),
 
     // (optional) accessed within the source code with `secrets.varName` (ie: secrets.apiKey), must be a string.
     secrets: { 
@@ -25,7 +25,7 @@ const priceConfig = {
     },
 
     // args (array[""]): source code accesses via `args[index]`.
-    args: ["0"],       
+    args: ["0"],
         
     // shows: expected type of the returned value.
     expectedReturnType: ReturnType.bytes,

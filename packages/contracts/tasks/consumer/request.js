@@ -40,7 +40,7 @@ const {
     .addOptionalParam(
       "configpath",
       "Path to Functions request config file",
-      `${__dirname}/../../configs/prices.js`,
+      `${__dirname}/../../requests/prices/config.js`,
       types.string
     )
     .setAction(async (taskArgs, hre) => {
