@@ -6,14 +6,14 @@ const apiResponse = await Functions.makeHttpRequest({
     url: `https://api.chateau.voyage/house/${tokenId}`,
 })
 
-const realEstateAddress = apiResponse.data.UnparsedAddress;
-const yearBuilt = Number(apiResponse.data.YearBuilt);
-const lotSizeSquareFeet = Number(apiResponse.data.LotSizeSquareFeet);
+const homeAddress = apiResponse.data.homeAddress;
+const yearBuilt = Number(apiResponse.data.yearBuilt);
+const squareFootage = Number(apiResponse.data.squareFootage);
 // const bedrooms = Number(apiResponse.data.BedroomsTotal);
 
-console.log(`Real Estate Address: ${realEstateAddress}`);
+console.log(`Real Estate Address: ${homeAddress}`);
 console.log(`Year Built: ${yearBuilt}`);
-console.log(`Lot Size Square Feet: ${lotSizeSquareFeet}`);
+console.log(`Lot Size Square Feet: ${squareFootage}`);
 // console.log(`Bedrooms: ${bedrooms}`);
 
 const encoded = abiCoder.encode([
@@ -22,9 +22,9 @@ const encoded = abiCoder.encode([
     `uint256`
         // ,`uint256`
 ], [
-    realEstateAddress, 
+    homeAddress, 
     yearBuilt, 
-    lotSizeSquareFeet
+    squareFootage
     //  ,bedrooms
 ]
 );

@@ -162,9 +162,9 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
         if (s_latestRequestId == requestId) {
             // [then] decode: response to get property details.
             (
-                string memory realEstateAddress, 
+                string memory homeAddress, 
                 uint yearBuilt, 
-                uint lotSizeSquareFeet
+                uint squareFootage
             ) =
                 abi.decode(response, (string, uint, uint));
             
@@ -178,17 +178,17 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
                             '{"name": "Tokenized Real Estate",'
                             '"description": "Tokenized Real Estate",',
                             '"image": "",' '"attributes": [',
-                            '{"trait_type": "realEstateAddress",',
+                            '{"trait_type": "homeAddress",',
                             '"value": ',
-                            realEstateAddress,
+                            homeAddress,
                             "}",
                             ',{"trait_type": "yearBuilt",',
                             '"value": ',
                             yearBuilt,
                             "}",
-                            ',{"trait_type": "lotSizeSquareFeet",',
+                            ',{"trait_type": "squareFootage",',
                             '"value": ',
-                            lotSizeSquareFeet,
+                            squareFootage,
                             "}",
                             "]}"
                         )
