@@ -35,7 +35,9 @@ contract RealEstateTest is BaseTest {
             );
 
         sRealEstate =
-            new RealEstate(address(functionsRouter));
+            new RealEstate(
+                address(functionsRouter)
+            );
 
         console.log(block.chainid);
         vm.chainId(AVAX_FUJI_CHAIN_ID);

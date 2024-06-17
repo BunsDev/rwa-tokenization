@@ -1,7 +1,7 @@
 const { ethers } = await import('npm:ethers@6.10.0');
 const abiCoder = ethers.AbiCoder.defaultAbiCoder();
 
-const tokenId = args[0];
+const tokenId = Math.floor(Math.random() * 1000); // args[0];
 
 const apiResponse = await Functions.makeHttpRequest({
     url: `https://api.chateau.voyage/house/${tokenId}`,

@@ -11,6 +11,9 @@ import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import { ERC721Burnable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/interfaces/IERC20.sol";
+
 /**
  * @title Chainlink Functions example on-demand consumer contract example
  */
@@ -18,6 +21,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     ERC721, ERC721URIStorage, ERC721Burnable
  {
     using FunctionsRequest for FunctionsRequest.Request;
+    using SafeERC20 for IERC20;
 
     FunctionsSource internal immutable i_functionsSource;
 
@@ -65,7 +69,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     // emits: OCRResponse event.
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
-    constructor(address routerAddress) 
+    constructor(address routerAddress)
         ERC721("Tokenized Real Estate", "tRE")
         FunctionsClient(routerAddress) 
         ConfirmedOwner(msg.sender) 
@@ -86,7 +90,6 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
      * @param subscriptionId Subscription ID used to pay for request (FunctionsConsumer contract address must first be added to the subscription)
      * @param callbackGasLimit Maximum amount of gas used to call the inherited `handleOracleFulfillment` method
      */
-
     function sendRequest(
         string calldata source,
         FunctionsRequest.Location secretsLocation,
@@ -122,7 +125,6 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
      * @notice Store latest result/error
      * @param requestId The request ID, returned by sendRequest()
      * @param response Aggregated response from the user code
-     * @param err Aggregated error from the user code or from the execution pipeline
      * Either response or error parameter will be set, but never both
      */
 
@@ -149,7 +151,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     function fulfillRequest(
         bytes32 requestId, 
         bytes memory response, 
-        bytes memory err
+        bytes memory /* err */
     ) internal override {
         // [if] asset is requested for the first time.
         if (s_latestRequestId == requestId) {
@@ -160,7 +162,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
                 uint squareFootage
             ) =
                 abi.decode(response, (string, uint, uint));
-            
+
             // [then] increment: `tokenId`
             uint tokenId = _nextTokenId++;
             _totalHouses++;
@@ -217,25 +219,25 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     function issue(
         address recipientAddress, 
         uint64 subscriptionId,
-        uint32 gasLimit,
-        bytes32 donID
+        uint32 gasLimit
+        // bytes32 donID
     )
         external
         onlyOwner
         returns (bytes32 requestId)
     {
-        // if (s_latestRequestId != bytes32(0)) revert LatestIssueInProgress();
+        if (s_latestRequestId != bytes32(0)) revert LatestIssueInProgress();
         // generates: request (`req`)
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(i_functionsSource.getNftMetadata());
         // gets: requestId from the _sendRequest, which includes the encodeCBOR from the request (`req`).
-        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
+        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, DON_ID);
         // maps: requestId --> recipient 
         s_issueTo[requestId] = recipientAddress;
     }
 
     // updates: associated price details for a given `tokenId`.
-    function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit, bytes32 donID)
+    function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit, bytes32 DON_ID)
         external
         onlyAutomationForwarder
         returns (bytes32 requestId)
@@ -246,7 +248,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
         string[] memory args = new string[](1);
         args[0] = string(abi.encode(tokenId));
 
-        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
+        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, DON_ID);
     }
 
 
