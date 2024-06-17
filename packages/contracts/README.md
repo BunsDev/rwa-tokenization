@@ -76,7 +76,7 @@ npx hardhat func-sub-create --network <NETWORK_NAME> --amount <LINK_AMOUNT> --co
 ```
 
 ### 5. Make Requests
-Functions enable you to make requests via the consumer contract. Before requesting, make sure you have successfully compiled your Consumer Contract (`Brokerage.sol` // `RealEstate.sol`), otherwise the request will fail to process.
+Functions enable you to make requests via the consumer contract. Before requesting, make sure you have successfully compiled your Consumer Contract (`RealEstate.sol`), otherwise the request will fail to process.
 
 You may do this programmatically with: <br/>
 ```

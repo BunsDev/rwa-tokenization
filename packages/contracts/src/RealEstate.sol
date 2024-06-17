@@ -21,8 +21,10 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
 
     FunctionsSource internal immutable i_functionsSource;
 
-    // DON ID for the Functions DON to which the requests are sent
-    bytes32 public donId;
+    // network-specific settings (todo verify target network configurations).
+    bytes32 public immutable DON_ID = bytes32(0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000);
+    // address public immutable LINK_ADDRESS = 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
+    // address public immutable ROUTER_ADDRESS = 0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0;
 
     // reports: latestPrice response.
     string public latestPrice;
@@ -34,7 +36,9 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     bytes32 public s_latestRequestId;
     bytes public s_latestResponse;
     bytes public s_latestError;
+
     address internal s_automationForwarderAddress;
+    address internal s_routerAddress;
 
     mapping(bytes32 requestId => address to) internal s_issueTo;
     mapping(uint tokenId => PriceDetails) internal s_priceDetails;
@@ -61,24 +65,13 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     // emits: OCRResponse event.
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
-    constructor(
-        address router,
-        bytes32 _donId
-    ) 
+    constructor(address routerAddress) 
         ERC721("Tokenized Real Estate", "tRE")
-        FunctionsClient(router) 
+        FunctionsClient(routerAddress) 
         ConfirmedOwner(msg.sender) 
     {
         i_functionsSource = new FunctionsSource();
-        donId = _donId;
-    }
-
-    /**
-     * @notice Set the DON ID
-     * @param newDonId New DON ID
-     */
-    function setDonId(bytes32 newDonId) external onlyOwner {
-        donId = newDonId;
+        s_routerAddress = routerAddress;
     }
 
     // DEFAULT CONSUMER FUNCTIONS //
@@ -121,7 +114,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
             req.encodeCBOR(),
             subscriptionId,
             callbackGasLimit,
-            donId
+            DON_ID
         );
     }
 
@@ -170,6 +163,8 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
             
             // [then] increment: `tokenId`
             uint tokenId = _nextTokenId++;
+            _totalHouses++;
+
             // [then] create URI: with property details.
             string memory uri = Base64.encode(
                 bytes(

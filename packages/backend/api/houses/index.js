@@ -1,11 +1,11 @@
 'use strict';
 
 const { web3Factory } = require("../../utils/web3");
-const { BN, CHAIN_ID, BROKERAGE_ADDRESS, BROKERAGE_ABI } = require("../../constants");
+const { BN, CHAIN_ID, REAL_ESTATE_ADDRESS, REAL_ESTATE_ABI } = require("../../constants");
 const web3 = web3Factory(CHAIN_ID);
 
 // CONTRACTS //
-const Brokerage = new web3.eth.Contract(BROKERAGE_ABI, BROKERAGE_ADDRESS)
+const RealEstate = new web3.eth.Contract(REAL_ESTATE_ABI, REAL_ESTATE_ADDRESS)
 
 // generates: random integer.
 function getRandomInt(max) {
@@ -13,7 +13,7 @@ function getRandomInt(max) {
 }
 
 async function getInfo() {
-    const totalHouses = new BN(await Brokerage.methods.totalHouses().call())
+    const totalHouses = new BN(await RealEstate.methods.totalHouses().call())
     // const totalHouses = new BN(_totalHouses.toString())
         return {
             "totalHouses": totalHouses,

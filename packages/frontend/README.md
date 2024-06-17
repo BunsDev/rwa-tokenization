@@ -2,7 +2,7 @@
 
 ## Owner Flow
     1. **Tokenize**: Real Estate (House)
-        - via `Brokerage.sol`
+        - via `RealEstate.sol`
         - transacts on the issue() function
     2. **View**: House Data
         - view key data for a gien house.
