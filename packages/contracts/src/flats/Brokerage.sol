@@ -1568,8 +1568,9 @@ library SignedMath {
 
 contract FunctionsSource {
     string public getNftMetadata = "const { ethers } = await import('npm:ethers@6.10.0');"
-        "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const apiResponse = await Functions.makeHttpRequest({"
-        "    url: `https://api.bridgedataoutput.com/api/v2/OData/test/Property('P_5dba1fb94aa4055b9f29696f')?access_token=6baca547742c6f96a6ff71b138424f21`,"
+        "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const tokenId = args[0];"
+        "const apiResponse = await Functions.makeHttpRequest({"
+        "    url: `https://api.chateau.voyage/house/${tokenId}`,"
         "});" "const realEstateAddress = apiResponse.data.UnparsedAddress;"
         "const yearBuilt = Number(apiResponse.data.YearBuilt);"
         "const lotSizeSquareFeet = Number(apiResponse.data.LotSizeSquareFeet);"
@@ -1579,11 +1580,11 @@ contract FunctionsSource {
     string public getPrices = "const { ethers } = await import('npm:ethers@6.10.0');"
         "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const tokenId = args[0];"
         "const apiResponse = await Functions.makeHttpRequest({"
-        "    url: `https://api.bridgedataoutput.com/api/v2/OData/test/Property('P_5dba1fb94aa4055b9f29696f')?access_token=6baca547742c6f96a6ff71b138424f21`,"
-        "});" "const listPrice = Number(apiResponse.data.ListPrice);"
-        "const originalListPrice = Number(apiResponse.data.OriginalListPrice);"
-        "const taxAssessedValue = Number(apiResponse.data.TaxAssessedValue);"
-        "const encoded = abiCoder.encode([`uint256`, `uint256`, `uint256`, `uint256`], [tokenId, listPrice, originalListPrice, taxAssessedValue]);"
+        "    url: `https://api.chateau.voyage/house/${tokenId}`,"
+        "});" "const listPrice = Number(apiResponse.data.listPrice);"
+        "const originalPrice = Number(apiResponse.data.originalPrice);"
+        "const taxValue = Number(apiResponse.data.taxValue);"
+        "const encoded = abiCoder.encode([`uint256`, `uint256`, `uint256`, `uint256`], [tokenId, listPrice, originalPrice, taxValue]);"
         "return ethers.getBytes(encoded);";
 }
 
@@ -3232,8 +3233,8 @@ contract RealEstate is
 
     struct PriceDetails {
         uint80 listPrice;
-        uint80 originalListPrice;
-        uint80 taxAssessedValue;
+        uint80 originalPrice;
+        uint80 taxValue;
     }
 
     // ERRORS //
@@ -3374,14 +3375,14 @@ contract RealEstate is
 
         // [else] update the price details for a given `tokenId`. 
         } else {
-            (uint tokenId, uint listPrice, uint originalListPrice, uint taxAssessedValue) =
+            (uint tokenId, uint listPrice, uint originalPrice, uint taxValue) =
                 abi.decode(response, (uint, uint, uint, uint));
             // map: price details to the associated `tokenId`.
             s_priceDetails[tokenId] = 
                 PriceDetails({
                     listPrice: uint80(listPrice),
-                    originalListPrice: uint80(originalListPrice),
-                    taxAssessedValue: uint80(taxAssessedValue)
+                    originalPrice: uint80(originalPrice),
+                    taxValue: uint80(taxValue)
                 });
         }
     }
@@ -3429,9 +3430,8 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
 
     // network-specific settings (todo verify)
     bytes32 public immutable DON_ID = bytes32(0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000);
-    address public immutable LINK_ADDRESS = address(0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846);
-    address public immutable FUNCTIONS_ROUTER_ADDRESS = address(0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0);
-    uint32 public immutable GAS_LIMIT = 300_000;
+    address public immutable LINK_ADDRESS = 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
+    address public immutable FUNCTIONS_ROUTER_ADDRESS = 0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0;
 
     // creates: Houses struct (immutable variables).
     struct Houses {
@@ -3447,6 +3447,13 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
         address homeownerAddress
     );
 
+    constructor() {
+        issueHouse(
+            0x6D3cF2d1D7e113a2687dF9080CC490e176F53760
+            // , uint64(9614)
+        );
+    }
+
     // shows: total houses available from brokerage firm.
     function totalHouses() public view override returns (uint) {
         return _totalHouses;
@@ -3454,8 +3461,9 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
     
     // issues: house to a given owner
     function issueHouse(
-        address recipientAddress,
-        uint64 subscriptionId
+        address recipientAddress
+        //, uint64 subscriptionId
+        //, uint32 gasLimit
     ) public onlyOwner returns (address house, uint id){
         // creates: id reference.
         id = houses.length;
@@ -3467,7 +3475,7 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
         houses.push(house);
 
         // stores: house to a given owner.
-        housesByOwner[msg.sender].push(id);
+        housesByOwner[recipientAddress].push(id);
 
         // increments: the total number of houses.
         _totalHouses++;
@@ -3478,26 +3486,26 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
             homeownerAddress: recipientAddress
         }));
 
-        // executes: house issuance via the generated contract.
-        _issueHouse(
-            id, 
-            recipientAddress,
-            subscriptionId,
-            GAS_LIMIT,
-            DON_ID
-        );
+        // // executes: house issuance via the generated contract.
+        // _issueHouse(
+        //     id, 
+        //     recipientAddress,
+        //     subscriptionId,
+        //     gasLimit,
+        //     DON_ID
+        // );
     
         emit IssuedHouse(id, recipientAddress);
     }
 
     // issues: real estate property.
-    function _issueHouse(
+    function initializeIssuance(
         uint id,
         address recipientAddress,
         uint64 subscriptionId,
         uint32 gasLimit,
         bytes32 donID
-    ) internal {
+    ) public onlyOwner {
 
         // gets: stored house info by id.
         Houses storage house = houseInfo[id];
