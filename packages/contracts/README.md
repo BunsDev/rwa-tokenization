@@ -24,7 +24,7 @@ yarn
 #### Create Password
 Chainlink Functions enables you to securely share secrets with the DON. Secrets are encrypted with a password.
 ```
-yarn set:pw
+yarn pw
 ```
 Once the ecrpytion key is created with your desired password, you can safely share your secrets with the DON, which requires multiple nodes to decrypt with consensus.
 
@@ -35,7 +35,7 @@ We may now safely store environment variables without worrying about them being 
 These variables will be stored in a file called `.env.enc`.
 
 ```
-yarn set:env
+yarn setup
 ```
 After running the command, you'll be prompted to enter the following for each variable to be encrypted:
 

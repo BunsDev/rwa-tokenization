@@ -1,60 +1,52 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity >=0.7.0;
+
+import { FunctionsClient } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
+import { ConfirmedOwner } from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
+import { FunctionsRequest } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
+import { FunctionsSource } from "./FunctionsSource.sol";
+import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import { ERC721Burnable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-import { IERC20 } from "@openzeppelin/contracts/interfaces/IERC20.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-
-import { LinkTokenInterface } from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
-import { FunctionsClient } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
-import { FunctionsRequest } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
-import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
-import { FunctionsSource } from "./FunctionsSource.sol";
 
 /**
- * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
- * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
- * DO NOT USE THIS CODE IN PRODUCTION.
-*/
-
-contract RealEstate is 
-    ERC721, ERC721URIStorage, ERC721Burnable, 
-    FunctionsClient, 
-    ReentrancyGuard, Ownable(msg.sender) {
+ * @title Chainlink Functions example on-demand consumer contract example
+ */
+contract RealEstate is FunctionsClient, ConfirmedOwner,
+    ERC721, ERC721URIStorage, ERC721Burnable
+ {
     using FunctionsRequest for FunctionsRequest.Request;
-    using SafeERC20 for IERC20;
 
     FunctionsSource internal immutable i_functionsSource;
-    LinkTokenInterface internal immutable i_linkToken;
 
-    bytes32 internal s_lastRequestId;
+    // DON ID for the Functions DON to which the requests are sent
+    bytes32 public donId;
+
+    // reports: latestPrice response.
+    string public latestPrice;
+
+    uint private _totalHouses;
+    uint private _nextTokenId;
+
+    // stored variables
+    bytes32 public s_latestRequestId;
+    bytes public s_latestResponse;
+    bytes public s_latestError;
     address internal s_automationForwarderAddress;
 
     mapping(bytes32 requestId => address to) internal s_issueTo;
     mapping(uint tokenId => PriceDetails) internal s_priceDetails;
 
-    uint private _nextTokenId;
-
-    enum PayFeesIn {
-        Native,
-        LINK
-    }
+    error LatestIssueInProgress();
+    error OnlyAutomationForwarderCanCall();
 
     struct PriceDetails {
         uint80 listPrice;
         uint80 originalListPrice;
         uint80 taxAssessedValue;
     }
-
-    // ERRORS //
-    error NothingToWithdraw();
-    error FailedToWithdrawEth(address owner, address target, uint value);
-    error LatestIssueInProgress();
-    error OnlyAutomationForwarderCanCall();
 
     modifier onlyAutomationForwarder() {
         if (msg.sender != s_automationForwarderAddress) {
@@ -63,87 +55,111 @@ contract RealEstate is
         _;
     }
 
+    // emits: price reported event.
+    event PriceReported(bytes32 indexed requestId, string latestPrice, uint timeStamp);
+
+    // emits: OCRResponse event.
+    event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
+
     constructor(
-        address functionsRouterAddress,
-        address linkTokenAddress
-    ) ERC721("Tokenized Real Estate", "tRE") FunctionsClient(functionsRouterAddress) {
+        address router,
+        bytes32 _donId
+    ) 
+        ERC721("Tokenized Real Estate", "tRE")
+        FunctionsClient(router) 
+        ConfirmedOwner(msg.sender) 
+    {
         i_functionsSource = new FunctionsSource();
-        i_linkToken = LinkTokenInterface(linkTokenAddress);
+        donId = _donId;
     }
 
-    /*/ RWA Tokenization Functionality /*/
-    
-    // assigns: requestId to a given recipient, which includes a request that pulls NFT metadata.
-    function issue(
-        address recipientAddress, 
+    /**
+     * @notice Set the DON ID
+     * @param newDonId New DON ID
+     */
+    function setDonId(bytes32 newDonId) external onlyOwner {
+        donId = newDonId;
+    }
+
+    // DEFAULT CONSUMER FUNCTIONS //
+
+    /**
+     * @notice Triggers an on-demand Functions request using remote encrypted secrets
+     * @param source JavaScript source code
+     * @param secretsLocation Location of secrets (only Location.Remote & Location.DONHosted are supported)
+     * @param encryptedSecretsReference Reference pointing to encrypted secrets
+     * @param args String arguments passed into the source code and accessible via the global variable `args`
+     * @param bytesArgs Bytes arguments passed into the source code and accessible via the global variable `bytesArgs` as hex strings
+     * @param subscriptionId Subscription ID used to pay for request (FunctionsConsumer contract address must first be added to the subscription)
+     * @param callbackGasLimit Maximum amount of gas used to call the inherited `handleOracleFulfillment` method
+     */
+
+    function sendRequest(
+        string calldata source,
+        FunctionsRequest.Location secretsLocation,
+        bytes calldata encryptedSecretsReference,
+        string[] calldata args,
+        bytes[] calldata bytesArgs,
         uint64 subscriptionId,
-        uint32 gasLimit,
-        bytes32 donID
-    )
-        external
-        onlyOwner
-        returns (bytes32 requestId)
-    {
-        if (s_lastRequestId != bytes32(0)) revert LatestIssueInProgress();
-        // generates: request (`req`)
+        uint32 callbackGasLimit
+    ) external onlyOwner {
         FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(i_functionsSource.getNftMetadata());
-        // gets: requestId from the _sendRequest, which includes the encodeCBOR from the request (`req`).
-        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
-        // maps: requestId --> recipient 
-        s_issueTo[requestId] = recipientAddress;
+        req.initializeRequest(
+            FunctionsRequest.Location.Inline,
+            FunctionsRequest.CodeLanguage.JavaScript,
+            source
+        );
+        req.secretsLocation = secretsLocation;
+        req.encryptedSecretsReference = encryptedSecretsReference;
+        if (args.length > 0) {
+            req.setArgs(args);
+        }
+        if (bytesArgs.length > 0) {
+            req.setBytesArgs(bytesArgs);
+        }
+        s_latestRequestId = _sendRequest(
+            req.encodeCBOR(),
+            subscriptionId,
+            callbackGasLimit,
+            donId
+        );
     }
 
-    // gets: price details for a given `tokenId`
-    function getPriceDetails(uint tokenId) external view returns (PriceDetails memory) {
-        return s_priceDetails[tokenId];
-    }
+    /**
+     * @notice Store latest result/error
+     * @param requestId The request ID, returned by sendRequest()
+     * @param response Aggregated response from the user code
+     * @param err Aggregated error from the user code or from the execution pipeline
+     * Either response or error parameter will be set, but never both
+     */
 
-    // upates: associated price details for a given `tokenId`.
-    function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit, bytes32 donID)
-        external
-        onlyAutomationForwarder
-        returns (bytes32 requestId)
-    {
-        FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(i_functionsSource.getPrices());
+    // function fulfillRequest(
+    //     bytes32 requestId,
+    //     bytes memory response,
+    //     bytes memory err
+    // ) internal override {
+    //     s_latestResponse = response;
+    //     s_latestError = err;
 
-        string[] memory args = new string[](1);
-        args[0] = string(abi.encode(tokenId));
+    //     // updates: latest request id.
+    //     s_latestRequestId = requestId;
+        
+    //     // emits: OCRResponse event.
+    //     emit OCRResponse(requestId, response, err);
 
-        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
-    }
+    //     // converts: latest response to a (human-readable) string.
+    //     latestPrice = string(abi.encodePacked(response));
+    //     emit PriceReported(requestId, latestPrice, block.timestamp);
+    // }
 
-    // sends: ETH balance stored in the contract (onlyOwner)
-    function withdraw(address _beneficiary) public onlyOwner {
-        uint amount = address(this).balance;
-
-        if (amount == 0) revert NothingToWithdraw();
-
-        (bool sent,) = _beneficiary.call{value: amount}("");
-
-        if (!sent) revert FailedToWithdrawEth(msg.sender, _beneficiary, amount);
-    }
-
-    // sends: token balance stored in the contract (onlyOwner).
-    function withdrawToken(address _beneficiary, address _token) public onlyOwner {
-        uint amount = IERC20(_token).balanceOf(address(this));
-
-        if (amount == 0) revert NothingToWithdraw();
-
-        IERC20(_token).safeTransfer(_beneficiary, amount);
-    }
-
-    // FunctionsClient Functionality //
-
-    // updates: `s_lastRequestId` and fulfills the request.
+    // updates: `s_latestRequestId` and fulfills the request.
     function fulfillRequest(
         bytes32 requestId, 
         bytes memory response, 
-        bytes memory /* err */
+        bytes memory err
     ) internal override {
         // [if] asset is requested for the first time.
-        if (s_lastRequestId == requestId) {
+        if (s_latestRequestId == requestId) {
             // [then] decode: response to get property details.
             (
                 string memory realEstateAddress, 
@@ -200,26 +216,66 @@ contract RealEstate is
         }
     }
 
-    // sets: automation forwarder address (onlyOwner)
-    function setAutomationForwarder(address automationForwarderAddress) external onlyOwner {
-        s_automationForwarderAddress = automationForwarderAddress;
+    // TOKENIZATION //
+
+    // assigns: requestId to a given recipient, which includes a request that pulls NFT metadata.
+    function issue(
+        address recipientAddress, 
+        uint64 subscriptionId,
+        uint32 gasLimit,
+        bytes32 donID
+    )
+        external
+        onlyOwner
+        returns (bytes32 requestId)
+    {
+        // if (s_latestRequestId != bytes32(0)) revert LatestIssueInProgress();
+        // generates: request (`req`)
+        FunctionsRequest.Request memory req;
+        req.initializeRequestForInlineJavaScript(i_functionsSource.getNftMetadata());
+        // gets: requestId from the _sendRequest, which includes the encodeCBOR from the request (`req`).
+        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
+        // maps: requestId --> recipient 
+        s_issueTo[requestId] = recipientAddress;
     }
 
-    /*/ ERC721 Functionality /*/
+    // updates: associated price details for a given `tokenId`.
+    function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit, bytes32 donID)
+        external
+        onlyAutomationForwarder
+        returns (bytes32 requestId)
+    {
+        FunctionsRequest.Request memory req;
+        req.initializeRequestForInlineJavaScript(i_functionsSource.getPrices());
+
+        string[] memory args = new string[](1);
+        args[0] = string(abi.encode(tokenId));
+
+        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
+    }
+
+
+    // VIEW FUNCTIONS //
+    
+    // gets: price details for a given `tokenId`
+    function getPriceDetails(uint tokenId) external view returns (PriceDetails memory) {
+        return s_priceDetails[tokenId];
+    }
+
+    // shows: total houses available from brokerage firm.
+    function totalHouses() public view returns (uint) {
+        return _totalHouses;
+    }
+
+    // ERC721 SETTINGS //
 
     // gets: tokenURI for a given `tokenId`.
-    function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) 
-        returns (
-            string memory
-        ) {
+    function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory ) {
         return super.tokenURI(tokenId);
     }
-    
+
     // checks: interface is supported by this contract.
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (
-        bool
-    ) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) { 
         return super.supportsInterface(interfaceId);
     }
-
 }

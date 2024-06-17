@@ -16,7 +16,7 @@ const isTestEnvironment = npmCommand == "test" || npmCommand == "test:unit"
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 // TODO @dev - set this to run the accept.js task.
-// const SECOND_PRIVATE_KEY = process.env.SECOND_PRIVATE_KEY
+const SECOND_PRIVATE_KEY = process.env.SECOND_PRIVATE_KEY
 
 if (!isTestEnvironment && !PRIVATE_KEY) {
     throw Error("Set the PRIVATE_KEY environment variable with your EVM wallet private key")
@@ -26,19 +26,19 @@ const accounts = []
 if (PRIVATE_KEY) {
     accounts.push(PRIVATE_KEY)
 }
-// if (SECOND_PRIVATE_KEY) {
-//     accounts.push(SECOND_PRIVATE_KEY)
-// }
+if (SECOND_PRIVATE_KEY) {
+    accounts.push(SECOND_PRIVATE_KEY)
+}
 
-console.log(`Using accounts: ${accounts}`)
+// console.log(`Using accounts: ${accounts}`)
 
 const networks = {
     avalanche: {
-        url: process.env.AVALANCHE_RPC_URL || "UNSET",
+        url: "https://api.avax.network/ext/bc/C/rpc",
         gasPrice: undefined,
         nonce: undefined,
         accounts,
-        verifyApiKey: process.env.SNOWTRACE_API_KEY || "UNSET",
+        verifyApiKey: "verifyContract",
         chainId: 43114,
         confirmations: DEFAULT_VERIFICATION_BLOCK_CONFIRMATIONS,
         nativeCurrencySymbol: "AVAX",
@@ -49,11 +49,11 @@ const networks = {
         gatewayUrls: ["https://01.functions-gateway.chain.link/", "https://02.functions-gateway.chain.link/"],
     },
     avalancheFuji: {
-        url: process.env.AVALANCHE_FUJI_RPC_URL || "UNSET",
+        url: "https://api.avax-test.network/ext/bc/C/rpc",
         gasPrice: undefined,
         nonce: undefined,
         accounts,
-        verifyApiKey: process.env.SNOWTRACE_API_KEY || "UNSET",
+        verifyApiKey: "verifyContract",
         chainId: 43113,
         confirmations: DEFAULT_VERIFICATION_BLOCK_CONFIRMATIONS,
         nativeCurrencySymbol: "AVAX",
