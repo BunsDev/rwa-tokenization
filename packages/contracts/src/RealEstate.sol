@@ -44,8 +44,8 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
 
     struct PriceDetails {
         uint80 listPrice;
-        uint80 originalListPrice;
-        uint80 taxAssessedValue;
+        uint80 originalPrice;
+        uint80 taxValue;
     }
 
     modifier onlyAutomationForwarder() {
@@ -204,21 +204,21 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
 
         // [else] update the price details for a given `tokenId`. 
         } else {
-            (uint tokenId, uint listPrice, uint originalListPrice, uint taxAssessedValue) =
+            (uint tokenId, uint listPrice, uint originalPrice, uint taxValue) =
                 abi.decode(response, (uint, uint, uint, uint));
             // map: price details to the associated `tokenId`.
             s_priceDetails[tokenId] = 
                 PriceDetails({
                     listPrice: uint80(listPrice),
-                    originalListPrice: uint80(originalListPrice),
-                    taxAssessedValue: uint80(taxAssessedValue)
+                    originalPrice: uint80(originalPrice),
+                    taxValue: uint80(taxValue)
                 });
         }
     }
 
     // TOKENIZATION //
 
-    // assigns: requestId to a given recipient, which includes a request that pulls NFT metadata.
+    // assigns: `requestId` to a given recipient, which includes a request that pulls NFT metadata.
     function issue(
         address recipientAddress, 
         uint64 subscriptionId,

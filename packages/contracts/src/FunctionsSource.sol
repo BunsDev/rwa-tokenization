@@ -9,8 +9,9 @@ pragma solidity ^0.8.20;
 
 contract FunctionsSource {
     string public getNftMetadata = "const { ethers } = await import('npm:ethers@6.10.0');"
-        "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const apiResponse = await Functions.makeHttpRequest({"
-        "    url: `https://api.bridgedataoutput.com/api/v2/OData/test/Property('P_5dba1fb94aa4055b9f29696f')?access_token=6baca547742c6f96a6ff71b138424f21`,"
+        "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const tokenId = args[0];" 
+        "const apiResponse = await Functions.makeHttpRequest({"
+        "url: `https://api.chateau.voyage/house/${tokenId}`,"
         "});" "const realEstateAddress = apiResponse.data.UnparsedAddress;"
         "const yearBuilt = Number(apiResponse.data.YearBuilt);"
         "const lotSizeSquareFeet = Number(apiResponse.data.LotSizeSquareFeet);"
@@ -20,10 +21,10 @@ contract FunctionsSource {
     string public getPrices = "const { ethers } = await import('npm:ethers@6.10.0');"
         "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const tokenId = args[0];"
         "const apiResponse = await Functions.makeHttpRequest({"
-        "    url: `https://api.bridgedataoutput.com/api/v2/OData/test/Property('P_5dba1fb94aa4055b9f29696f')?access_token=6baca547742c6f96a6ff71b138424f21`,"
-        "});" "const listPrice = Number(apiResponse.data.ListPrice);"
-        "const originalListPrice = Number(apiResponse.data.OriginalListPrice);"
-        "const taxAssessedValue = Number(apiResponse.data.TaxAssessedValue);"
-        "const encoded = abiCoder.encode([`uint256`, `uint256`, `uint256`, `uint256`], [tokenId, listPrice, originalListPrice, taxAssessedValue]);"
+        "url: `https://api.chateau.voyage/house/${tokenId}`,"
+        "});" "const listPrice = Number(apiResponse.data.listPrice);"
+        "const originalPrice = Number(apiResponse.data.originalPrice);"
+        "const taxValue = Number(apiResponse.data.taxValue);"
+        "const encoded = abiCoder.encode([`uint256`, `uint256`, `uint256`, `uint256`], [tokenId, listPrice, originalPrice, taxValue]);"
         "return ethers.getBytes(encoded);";
 }

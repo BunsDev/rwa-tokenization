@@ -34,10 +34,6 @@ async function infos(ctx) {
     ctx.body = (await getInfo(ctx))
 }
 
-async function houseBrokerageInfo(ctx) {
-    ctx.body = (await getHouseBrokerageInfo(ctx))
-}
-
 async function houseInfo(ctx) {
     ctx.body = (await getHouseInfo(ctx))
 }
