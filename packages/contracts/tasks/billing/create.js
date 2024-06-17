@@ -12,11 +12,14 @@ task("func-sub-create", "Creates a new billing subscription for Functions consum
   .setAction(async (taskArgs) => {
     const signer = await ethers.getSigner()
     const functionsRouterAddress = networks[network.name]["functionsRouter"]
+    console.log(networks[network.name]["functionsRouter"])
+
     const linkTokenAddress = networks[network.name]["linkToken"]
 
     const linkAmount = taskArgs.amount
-    const confirmations = linkAmount > 0 ? networks[network.name].confirmations : 1
+    const confirmations = linkAmount > 0 ? 2 : 1 // networks[network.name].confirmations : 1
     const consumerAddress = taskArgs.contract
+    console.log('consumerAddress', consumerAddress)
     const txOptions = { confirmations }
 
     const sm = new SubscriptionManager({ signer, linkTokenAddress, functionsRouterAddress })
