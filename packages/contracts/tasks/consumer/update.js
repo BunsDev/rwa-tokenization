@@ -15,9 +15,9 @@ const {
   const path = require("path")
   const process = require("process")
   
-  task("func-issue", "Issues an NFT via an on-demand request from a Functions consumer contract")
+  task("func-update", "Update price details ")
     .addParam("contract", "Address of the consumer contract to call")
-    .addParam("to", "Recipient address for the NFT")
+    .addParam("tokenid", "tokenId associated with the upate to be executed")
     .addParam("subid", "Billing subscription ID used to pay for the request")
     .addOptionalParam(
       "simulate",
@@ -41,14 +41,14 @@ const {
     .addOptionalParam(
       "configpath",
       "Path to Functions request config file",
-      `${__dirname}/../../requests/metadata/config.js`,
+      `${__dirname}/../../requests/prices/config.js`,
       types.string
     )
     .setAction(async (taskArgs, hre) => {
       // Get the required parameters
       const contractAddr = taskArgs.contract
       const subscriptionId = parseInt(taskArgs.subid)
-      const recipientAddress = taskArgs.to
+      const tokenId = parseInt(taskArgs.tokenid)
       const slotId = parseInt(taskArgs.slotid)
       const callbackGasLimit = parseInt(taskArgs.callbackgaslimit)
   
@@ -191,8 +191,8 @@ const {
       if (networks[network.name].nonce) {
         overrides.nonce = networks[network.name].nonce
       }
-      const issueTx = await consumerContract.issue(
-        recipientAddress,                             // address recipientAddress, 
+      const issueTx = await consumerContract.updatePriceDetails(
+        tokenId,                             // address tokenId, 
         subscriptionId,                               // uint64 subscriptionId,
         callbackGasLimit,                              // uint32 gasLimit,
         // todo: inspect if this is necessary.

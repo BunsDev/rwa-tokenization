@@ -76,6 +76,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     {
         i_functionsSource = new FunctionsSource();
         s_routerAddress = routerAddress;
+        s_automationForwarderAddress = msg.sender;
     }
 
     // DEFAULT CONSUMER FUNCTIONS //
@@ -220,7 +221,6 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
         address recipientAddress, 
         uint64 subscriptionId,
         uint32 gasLimit
-        // bytes32 donID
     )
         external
         onlyOwner
@@ -237,7 +237,11 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     }
 
     // updates: associated price details for a given `tokenId`.
-    function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit)
+    function updatePriceDetails(
+        uint tokenId, 
+        uint64 subscriptionId, 
+        uint32 gasLimit
+    )
         external
         onlyAutomationForwarder
         returns (bytes32 requestId)
@@ -251,6 +255,9 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
         requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, DON_ID);
     }
 
+    function setAutomationForwarder(address automationForwarderAddress) external onlyOwner {
+        s_automationForwarderAddress = automationForwarderAddress;
+    }
 
     // VIEW FUNCTIONS //
     

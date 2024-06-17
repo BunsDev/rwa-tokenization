@@ -15,11 +15,13 @@
     "setup": "npx env-enc set",
     "flat": "forge flatten --output src/flats/RealEstate.sol src/RealEstate.sol",
 
-    "subscribe": "npx hardhat func-sub-create --network avalancheFuji --amount 2 --contract 0x3e7E71F45391395A1fa6ebd2BD8dFBB832169571",
-    "issue": "npx hardhat func-issue --network avalancheFuji --contract 0x3e7E71F45391395A1fa6ebd2BD8dFBB832169571 --to 0x6D3cF2d1D7e113a2687dF9080CC490e176F53760 --subid 9614",
-    "read": "npx hardhat func-read --network avalancheFuji --contract 0x3e7E71F45391395A1fa6ebd2BD8dFBB832169571",
+    "subscribe": "npx hardhat func-sub-create --network avalancheFuji --amount 2 --contract 0x8e70fD24309B027a5309B6A6b182836b51000AcD",
+    "issue": "npx hardhat func-issue --network avalancheFuji --contract 0x8e70fD24309B027a5309B6A6b182836b51000AcD --to 0x6D3cF2d1D7e113a2687dF9080CC490e176F53760 --subid 9614",
+    "update": "npx hardhat func-update --network avalancheFuji --contract 0x8e70fD24309B027a5309B6A6b182836b51000AcD --tokenid 0 --subid 9614",
+    "request": "npx hardhat func-request --network avalancheFuji --contract 0x8e70fD24309B027a5309B6A6b182836b51000AcD --subid 9614",
+    "read": "npx hardhat func-read --network avalancheFuji --contract 0x8e70fD24309B027a5309B6A6b182836b51000AcD",
 
-    "new": "npx hardhat func-sub-add --network avalancheFuji --contract 0x3e7E71F45391395A1fa6ebd2BD8dFBB832169571 --subid 9614"
+    "assign": "npx hardhat func-sub-add --network avalancheFuji --contract 0x8e70fD24309B027a5309B6A6b182836b51000AcD --subid 9614"
     },
     "dependencies": {
       "@chainlink/env-enc": "^1.0.5",
