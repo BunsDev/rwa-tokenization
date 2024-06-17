@@ -51,7 +51,7 @@ const {
       const callbackGasLimit = parseInt(taskArgs.callbackgaslimit)
   
       // Attach to the FunctionsConsumer contract
-      const consumerFactory = await ethers.getContractFactory("FunctionsConsumer")
+      const consumerFactory = await ethers.getContractFactory("RealEstate")
       const consumerContract = consumerFactory.attach(contractAddr)
   
       // Get requestConfig from the specified config file

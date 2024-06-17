@@ -11,15 +11,17 @@ task("func-sub-create", "Creates a new billing subscription for Functions consum
   )
   .setAction(async (taskArgs) => {
     const signer = await ethers.getSigner()
+    console.log('network: %s', network)
     const functionsRouterAddress = networks[network.name]["functionsRouter"]
-    console.log(networks[network.name]["functionsRouter"])
-
+    console.log('functionsRouter: %s', networks[network.name]["functionsRouter"])
+    
     const linkTokenAddress = networks[network.name]["linkToken"]
+    console.log('linkTokenAddress: %s', linkTokenAddress)
 
     const linkAmount = taskArgs.amount
-    const confirmations = linkAmount > 0 ? 2 : 1 // networks[network.name].confirmations : 1
+    const confirmations = linkAmount > 0 ? networks[network.name].confirmations : 1
     const consumerAddress = taskArgs.contract
-    console.log('consumerAddress', consumerAddress)
+    console.log('consumerAddress: %s', consumerAddress)
     const txOptions = { confirmations }
 
     const sm = new SubscriptionManager({ signer, linkTokenAddress, functionsRouterAddress })
@@ -45,7 +47,7 @@ task("func-sub-create", "Creates a new billing subscription for Functions consum
       )
 
       const subInfo = await sm.getSubscriptionInfo(subscriptionId)
-      // parse  balances into LINK for readability
+      // parse balances into LINK for readability
       subInfo.balance = ethers.utils.formatEther(subInfo.balance) + " LINK"
       subInfo.blockedBalance = ethers.utils.formatEther(subInfo.blockedBalance) + " LINK"
 

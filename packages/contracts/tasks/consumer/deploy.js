@@ -22,7 +22,7 @@ task("func-deploy-consumer", "Deploys the FunctionsConsumer contract")
       overrides.nonce = networks[network.name].nonce
     }
 
-    const consumerContractFactory = await ethers.getContractFactory("FunctionsConsumer")
+    const consumerContractFactory = await ethers.getContractFactory("RealEstate")
     const consumerContract = await consumerContractFactory.deploy(functionsRouter, donIdBytes32, overrides)
 
     console.log(
@@ -66,5 +66,5 @@ task("func-deploy-consumer", "Deploys the FunctionsConsumer contract")
       console.log("\nScanner API key is missing. Skipping contract verification...")
     }
 
-    console.log(`\nFunctionsConsumer contract deployed to ${consumerContract.address} on ${network.name}`)
+    console.log(`\RealEstate contract deployed to ${consumerContract.address} on ${network.name}`)
   })
