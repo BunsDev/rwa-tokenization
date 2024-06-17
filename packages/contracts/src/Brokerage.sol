@@ -76,8 +76,8 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
             id, 
             recipientAddress,
             subscriptionId,
-            GAS_LIMIT,
-            DON_ID
+            GAS_LIMIT
+            // DON_ID
         );
     
         emit IssuedHouse(id, recipientAddress);
@@ -88,8 +88,8 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
         uint id,
         address recipientAddress,
         uint64 subscriptionId,
-        uint32 gasLimit,
-        bytes32 donID
+        uint32 gasLimit
+        // bytes32 donID
     ) internal {
 
         // gets: stored house info by id.
@@ -102,8 +102,8 @@ contract Brokerage is IBrokerage, Ownable(msg.sender) {
         RealEstate(houseAddress).issue(
             recipientAddress, 
             subscriptionId,
-            gasLimit,
-            donID
+            gasLimit
+            // donID
         );
     }
 

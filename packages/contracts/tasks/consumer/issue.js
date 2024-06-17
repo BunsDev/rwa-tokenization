@@ -192,21 +192,12 @@ const {
         overrides.nonce = networks[network.name].nonce
       }
       const issueTx = await consumerContract.issue(
-        recipientAddress,                   // address recipientAddress, 
-        subid,                              // uint64 subscriptionId,
-        requestGasLimit,                    // uint32 gasLimit,
-        0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000, // bytes32 donID
+        recipientAddress,                             // address recipientAddress, 
+        subscriptionId,                               // uint64 subscriptionId,
+        callbackGasLimit,                              // uint32 gasLimit,
+        // todo: inspect if this is necessary.
+        overrides
       )
-    //   const requestTx = await consumerContract.sendRequest(
-    //     requestConfig.source,
-    //     requestConfig.secretsLocation,
-    //     encryptedSecretsReference,
-    //     requestConfig.args ?? [],
-    //     requestConfig.bytesArgs ?? [],
-    //     subscriptionId,
-    //     callbackGasLimit,
-    //     overrides
-    //   )
       const requestTxReceipt = await issueTx.wait(1)
       if (network.name !== "localFunctionsTestnet") {
         spinner.info(

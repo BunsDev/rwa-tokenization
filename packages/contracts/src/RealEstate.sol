@@ -237,7 +237,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     }
 
     // updates: associated price details for a given `tokenId`.
-    function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit, bytes32 DON_ID)
+    function updatePriceDetails(uint tokenId, uint64 subscriptionId, uint32 gasLimit)
         external
         onlyAutomationForwarder
         returns (bytes32 requestId)
