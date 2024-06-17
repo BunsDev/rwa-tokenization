@@ -18,13 +18,13 @@ task(
     const consumerContractFactory = await ethers.getContractFactory("FunctionsConsumer")
     const consumerContract = await consumerContractFactory.attach(taskArgs.contract)
 
-    let latestError = await consumerContract.latestError()
+    let latestError = await consumerContract.s_latestError()
     if (latestError.length > 0 && latestError !== "0x") {
       const errorString = Buffer.from(latestError.slice(2), "hex").toString()
       console.log(`\nOn-chain error message: ${errorString}`)
     }
 
-    let latestResponse = await consumerContract.latestResponse()
+    let latestResponse = await consumerContract.s_latestResponse()
     if (latestResponse.length > 0 && latestResponse !== "0x") {
       const requestConfig = require(path.isAbsolute(taskArgs.configpath)
         ? taskArgs.configpath

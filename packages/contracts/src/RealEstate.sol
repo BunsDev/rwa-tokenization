@@ -36,7 +36,7 @@ contract RealEstate is
 
     mapping(bytes32 requestId => address to) internal s_issueTo;
     mapping(uint tokenId => PriceDetails) internal s_priceDetails;
-
+=
     uint private _nextTokenId;
 
     enum PayFeesIn {
@@ -114,26 +114,6 @@ contract RealEstate is
         requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
     }
 
-    // sends: ETH balance stored in the contract (onlyOwner)
-    function withdraw(address _beneficiary) public onlyOwner {
-        uint amount = address(this).balance;
-
-        if (amount == 0) revert NothingToWithdraw();
-
-        (bool sent,) = _beneficiary.call{value: amount}("");
-
-        if (!sent) revert FailedToWithdrawEth(msg.sender, _beneficiary, amount);
-    }
-
-    // sends: token balance stored in the contract (onlyOwner).
-    function withdrawToken(address _beneficiary, address _token) public onlyOwner {
-        uint amount = IERC20(_token).balanceOf(address(this));
-
-        if (amount == 0) revert NothingToWithdraw();
-
-        IERC20(_token).safeTransfer(_beneficiary, amount);
-    }
-
     // FunctionsClient Functionality //
 
     // updates: `s_lastRequestId` and fulfills the request.
@@ -198,11 +178,6 @@ contract RealEstate is
                     taxAssessedValue: uint80(taxAssessedValue)
                 });
         }
-    }
-
-    // sets: automation forwarder address (onlyOwner)
-    function setAutomationForwarder(address automationForwarderAddress) external onlyOwner {
-        s_automationForwarderAddress = automationForwarderAddress;
     }
 
     /*/ ERC721 Functionality /*/

@@ -14,7 +14,6 @@ const {
   const chalk = require("chalk")
   const path = require("path")
   const process = require("process")
-  // import { priceConfig } from "../../configs/prices.js"
   
   task("func-request", "Initiates an on-demand request from a Functions consumer contract")
     .addParam("contract", "Address of the consumer contract to call")
