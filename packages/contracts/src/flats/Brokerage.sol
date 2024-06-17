@@ -1571,10 +1571,10 @@ contract FunctionsSource {
         "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const tokenId = args[0];"
         "const apiResponse = await Functions.makeHttpRequest({"
         "    url: `https://api.chateau.voyage/house/${tokenId}`,"
-        "});" "const realEstateAddress = apiResponse.data.UnparsedAddress;"
-        "const yearBuilt = Number(apiResponse.data.YearBuilt);"
-        "const lotSizeSquareFeet = Number(apiResponse.data.LotSizeSquareFeet);"
-        "const encoded = abiCoder.encode([`string`, `uint256`, `uint256`], [realEstateAddress, yearBuilt, lotSizeSquareFeet]);"
+        "});" "const homeAddress = apiResponse.data.homeAddress;"
+        "const yearBuilt = Number(apiResponse.data.yearBuilt);"
+        "const squareFootage = Number(apiResponse.data.squareFootage);"
+        "const encoded = abiCoder.encode([`string`, `uint256`, `uint256`], [homeAddress, yearBuilt, squareFootage]);"
         "return ethers.getBytes(encoded);";
 
     string public getPrices = "const { ethers } = await import('npm:ethers@6.10.0');"
@@ -3333,9 +3333,9 @@ contract RealEstate is
         if (s_lastRequestId == requestId) {
             // [then] decode: response to get property details.
             (
-                string memory realEstateAddress, 
+                string memory homeAddress, 
                 uint yearBuilt, 
-                uint lotSizeSquareFeet
+                uint squareFootage
             ) =
                 abi.decode(response, (string, uint, uint));
             
@@ -3349,17 +3349,17 @@ contract RealEstate is
                             '{"name": "Tokenized Real Estate",'
                             '"description": "Tokenized Real Estate",',
                             '"image": "",' '"attributes": [',
-                            '{"trait_type": "realEstateAddress",',
+                            '{"trait_type": "homeAddress",',
                             '"value": ',
-                            realEstateAddress,
+                            homeAddress,
                             "}",
                             ',{"trait_type": "yearBuilt",',
                             '"value": ',
                             yearBuilt,
                             "}",
-                            ',{"trait_type": "lotSizeSquareFeet",',
+                            ',{"trait_type": "squareFootage",',
                             '"value": ',
-                            lotSizeSquareFeet,
+                            squareFootage,
                             "}",
                             "]}"
                         )

@@ -12,10 +12,10 @@ contract FunctionsSource {
         "const abiCoder = ethers.AbiCoder.defaultAbiCoder();" "const tokenId = args[0];" 
         "const apiResponse = await Functions.makeHttpRequest({"
         "url: `https://api.chateau.voyage/house/${tokenId}`,"
-        "});" "const realEstateAddress = apiResponse.data.UnparsedAddress;"
-        "const yearBuilt = Number(apiResponse.data.YearBuilt);"
-        "const lotSizeSquareFeet = Number(apiResponse.data.LotSizeSquareFeet);"
-        "const encoded = abiCoder.encode([`string`, `uint256`, `uint256`], [realEstateAddress, yearBuilt, lotSizeSquareFeet]);"
+        "});" "const homeAddress = apiResponse.data.homeAddress;"
+        "const yearBuilt = Number(apiResponse.data.yearBuilt);"
+        "const squareFootage = Number(apiResponse.data.squareFootage);"
+        "const encoded = abiCoder.encode([`string`, `uint256`, `uint256`], [homeAddress, yearBuilt, squareFootage]);"
         "return ethers.getBytes(encoded);";
 
     string public getPrices = "const { ethers } = await import('npm:ethers@6.10.0');"
