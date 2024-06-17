@@ -15,21 +15,18 @@ async function getInfo() {
         }
 }
 
-async function getHouseBrokerageInfo(ctx) {
-    const houseAddress = ctx.params.address
-    // const houseInfo = await Brokerage.methods.getHouseInfo(houseAddress).call()
-
-        return {
-            "houseAddress": houseAddress,
-        }
-}
-
 async function getHouseInfo(ctx) {
     const id = ctx.params.id
     // const houseInfo = await Brokerage.methods.getHouseInfo(houseAddress).call()
+    const listPrice = '761167'
+    const originalPrice = '770747'
+    const taxValue = '729187'
 
         return {
             "id": id,
+            "listPrice": listPrice,
+            "originalPrice": originalPrice,
+            "taxValue": taxValue,
         }
 }
 
@@ -45,4 +42,4 @@ async function houseInfo(ctx) {
     ctx.body = (await getHouseInfo(ctx))
 }
 
-module.exports = { infos, houseBrokerageInfo, houseInfo };
+module.exports = { infos, houseInfo };
