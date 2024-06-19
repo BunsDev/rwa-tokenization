@@ -39,6 +39,8 @@ const History = async () => {
                   id,
                   listPrice,
                   homeAddress,
+                  // streetNumber,
+                  // streetName,
                   yearBuilt,
                   squareFootage,
                   txHash,

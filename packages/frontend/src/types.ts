@@ -38,21 +38,20 @@ export type WeatherHistoryEntry = {
 
 export type HouseHistoryEntry = {
   txHash: string
-  id: number
+  id: string
   listPrice: number
-  originalPrice?: number
-  taxValue?: number
-  homeAddress?: string
-  yearBuilt?: number
-  squareFootage?: number
+  // streetNumber: string
+  // streetName: string
+  homeAddress: string
+  yearBuilt: number
+  squareFootage: number
 }
 
 export type HouseResponse = {
   id: number
   listPrice: number
-  originalPrice: number
-  taxValue: number
-  homeAddress: string
+  streetNumber: number
+  streetName: string
   yearBuilt: number
   squareFootage: number
 }
