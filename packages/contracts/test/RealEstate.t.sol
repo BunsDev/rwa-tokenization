@@ -71,13 +71,13 @@ contract RealEstateTest is BaseTest {
         });
     }
 
-    // function test_issue() public {
-    //     sRealEstate.issue(
-    //         OWNER_ADDRESS,     // address recipientAddress, 
-    //                         // uint64 subscriptionId, 
-    //                         // uint32 gasLimit, 
-    //                         // bytes32 donID
+    // function test_issueHouse() public {
+    //     (bytes32 requestId, uint houseId) = sRealEstate.issueHouse(
+    //         OWNER_ADDRESS     // address recipientAddress, 
     //     );
+
+    //     console.log("[SUCCESS]: Created Request (id): %s", string(abi.encode(requestId)));
+    //     console.log("[SUCCESS]: Issued House: %s", houseId);
     // }
 
     function createSubscription() public {

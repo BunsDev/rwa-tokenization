@@ -5,7 +5,7 @@ import { FunctionsClient } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/
 import { ConfirmedOwner } from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 import { FunctionsRequest } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
 import { FunctionsSource } from "./FunctionsSource.sol";
-import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
+// import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -27,8 +27,9 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
 
     // network-specific settings (todo verify target network configurations).
     bytes32 public immutable DON_ID = bytes32(0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000);
-    // address public immutable LINK_ADDRESS = 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
-    // address public immutable ROUTER_ADDRESS = 0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0;
+    address public immutable LINK_ADDRESS = address(0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846);
+    address public immutable FUNCTIONS_ROUTER_ADDRESS = address(0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0);
+    uint32 public immutable GAS_LIMIT = 300_000;
 
     // reports: latestPrice response.
     string public latestPrice;
@@ -44,8 +45,29 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     address internal s_automationForwarderAddress;
     address internal s_routerAddress;
 
+    // gets: homeownerAddress associated with a given `requestId`.
     mapping(bytes32 requestId => address to) internal s_issueTo;
+
+    // gets: PriceDetails associated with a given `tokenId`.
     mapping(uint tokenId => PriceDetails) internal s_priceDetails;
+
+    // gets: `houseId` associated with a given `tokenId`.
+    mapping(address homeownerAddress => uint[] tokenId) public housesByOwner;
+
+    // creates: Houses struct (immutable variables).
+    struct Houses {
+        uint houseId;
+        address homeownerAddress;
+    }
+
+    // houses info
+    Houses[] public houseInfo;
+
+    // emits: event containing the `houseId` and `homeownerAddress`.
+    event IssuedHouse(
+        uint indexed houseId,
+        address homeownerAddress
+    );
 
     error LatestIssueInProgress();
     error OnlyAutomationForwarderCanCall();
@@ -127,114 +149,136 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
      * @param requestId The request ID, returned by sendRequest()
      * @param response Aggregated response from the user code
      * Either response or error parameter will be set, but never both
+     * @param err Aggregated response from the user code
      */
 
-    // function fulfillRequest(
-    //     bytes32 requestId,
-    //     bytes memory response,
-    //     bytes memory err
-    // ) internal override {
-    //     s_latestResponse = response;
-    //     s_latestError = err;
-
-    //     // updates: latest request id.
-    //     s_latestRequestId = requestId;
-        
-    //     // emits: OCRResponse event.
-    //     emit OCRResponse(requestId, response, err);
-
-    //     // converts: latest response to a (human-readable) string.
-    //     latestPrice = string(abi.encodePacked(response));
-    //     emit PriceReported(requestId, latestPrice, block.timestamp);
-    // }
-
-    // updates: `s_latestRequestId` and fulfills the request.
     function fulfillRequest(
-        bytes32 requestId, 
-        bytes memory response, 
-        bytes memory /* err */
+        bytes32 requestId,
+        bytes memory response,
+        bytes memory err
     ) internal override {
-        // [if] asset is requested for the first time.
-        if (s_latestRequestId == requestId) {
-            // [then] decode: response to get property details.
-            (
-                string memory homeAddress, 
-                uint yearBuilt, 
-                uint squareFootage
-            ) =
-                abi.decode(response, (string, uint, uint));
+        s_latestResponse = response;
+        s_latestError = err;
 
-            // [then] increment: `tokenId`
-            uint tokenId = _nextTokenId++;
-            _totalHouses++;
+        // updates: latest request id.
+        s_latestRequestId = requestId;
+        
+        // emits: OCRResponse event.
+        emit OCRResponse(requestId, response, err);
 
-            // [then] create URI: with property details.
-            string memory uri = Base64.encode(
-                bytes(
-                    string(
-                        abi.encodePacked(
-                            '{"name": "Tokenized Real Estate",'
-                            '"description": "Tokenized Real Estate",',
-                            '"image": "",' '"attributes": [',
-                            '{"trait_type": "homeAddress",',
-                            '"value": ',
-                            homeAddress,
-                            "}",
-                            ',{"trait_type": "yearBuilt",',
-                            '"value": ',
-                            yearBuilt,
-                            "}",
-                            ',{"trait_type": "squareFootage",',
-                            '"value": ',
-                            squareFootage,
-                            "}",
-                            "]}"
-                        )
-                    )
-                )
-            );
-            // [then] create: finalTokenURI: with metadata.
-            string memory finalTokenURI = string(abi.encodePacked("data:application/json;base64,", uri));
-            // [then] mint: `tokenId` to the associated `issueTo` for a given `requestId`.
-            _safeMint(s_issueTo[requestId], tokenId);
-            // [then] set: tokenURI for a given `tokenId`, containing metadata.
-            _setTokenURI(tokenId, finalTokenURI);
-
-        // [else] update the price details for a given `tokenId`. 
-        } else {
-            (uint tokenId, uint listPrice, uint originalPrice, uint taxValue) =
-                abi.decode(response, (uint, uint, uint, uint));
-            // map: price details to the associated `tokenId`.
-            s_priceDetails[tokenId] = 
-                PriceDetails({
-                    listPrice: uint80(listPrice),
-                    originalPrice: uint80(originalPrice),
-                    taxValue: uint80(taxValue)
-                });
-        }
+        // converts: latest response to a (human-readable) string.
+        latestPrice = string(abi.encodePacked(response));
+        emit PriceReported(requestId, latestPrice, block.timestamp);
     }
+
+    // // updates: `s_latestRequestId` and fulfills the request.
+    // function fulfillRequest(
+    //     bytes32 requestId, 
+    //     bytes memory response, 
+    //     bytes memory /* err */
+    // ) internal override {
+    //     // [if] asset is requested for the first time.
+    //     if (s_latestRequestId == requestId) {
+    //         // [then] decode: response to get property details.
+    //         (
+    //             string memory homeAddress, 
+    //             uint yearBuilt, 
+    //             uint squareFootage
+    //         ) =
+    //             abi.decode(response, (string, uint, uint));
+
+    //         // [then] increment: `tokenId`
+    //         uint tokenId = _nextTokenId++;
+
+    //         // issueHouse(
+    //         //     s_issueTo[requestId],
+    //         //     tokenId
+    //         // );
+
+    //         // [then] create URI: with property details.
+    //         string memory uri = Base64.encode(
+    //             bytes(
+    //                 string(
+    //                     abi.encodePacked(
+    //                         '{"name": "Tokenized Real Estate",'
+    //                         '"description": "Tokenized Real Estate",',
+    //                         '"image": "",' '"attributes": [',
+    //                         '{"trait_type": "homeAddress",',
+    //                         '"value": ',
+    //                         homeAddress,
+    //                         "}",
+    //                         ',{"trait_type": "yearBuilt",',
+    //                         '"value": ',
+    //                         yearBuilt,
+    //                         "}",
+    //                         ',{"trait_type": "squareFootage",',
+    //                         '"value": ',
+    //                         squareFootage,
+    //                         "}",
+    //                         "]}"
+    //                     )
+    //                 )
+    //             )
+    //         );
+    //         // [then] create: finalTokenURI: with metadata.
+    //         string memory finalTokenURI = string(abi.encodePacked("data:application/json;base64,", uri));
+    //         // [then] mint: `tokenId` to the associated `issueTo` for a given `requestId`.
+    //         _safeMint(s_issueTo[requestId], tokenId);
+    //         // [then] set: tokenURI for a given `tokenId`, containing metadata.
+    //         _setTokenURI(tokenId, finalTokenURI);
+
+    //     // [else] update the price details for a given `tokenId`. 
+    //     } else {
+    //         (uint tokenId, uint listPrice, uint originalPrice, uint taxValue) =
+    //             abi.decode(response, (uint, uint, uint, uint));
+    //         // map: price details to the associated `tokenId`.
+    //         s_priceDetails[tokenId] = 
+    //             PriceDetails({
+    //                 listPrice: uint80(listPrice),
+    //                 originalPrice: uint80(originalPrice),
+    //                 taxValue: uint80(taxValue)
+    //             });
+    //     }
+    // }
 
     // TOKENIZATION //
 
     // assigns: `requestId` to a given recipient, which includes a request that pulls NFT metadata.
-    function issue(
-        address recipientAddress, 
-        uint64 subscriptionId,
-        uint32 gasLimit
-    )
-        external
-        onlyOwner
-        returns (bytes32 requestId)
-    {
-        if (s_latestRequestId != bytes32(0)) revert LatestIssueInProgress();
-        // generates: request (`req`)
-        FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(i_functionsSource.getNftMetadata());
-        // gets: requestId from the _sendRequest, which includes the encodeCBOR from the request (`req`).
-        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, DON_ID);
-        // maps: requestId --> recipient 
-        s_issueTo[requestId] = recipientAddress;
-    }
+    // function issueHouse(
+    //     address recipientAddress,
+    //     uint64 subscriptionId
+    // )
+    //     public
+    //     onlyOwner
+    //     returns (bytes32 requestId, uint houseId)
+    // {
+    //     // generates: request (`req`)
+    //     FunctionsRequest.Request memory req;
+    //     req.initializeRequestForInlineJavaScript(i_functionsSource.getNftMetadata());
+
+    //     string[] memory args = new string[](1);
+    //     args[0] = string(abi.encode(_nextTokenId++));
+
+    //     // // gets: requestId from the _sendRequest, which includes the encodeCBOR from the request (`req`).
+    //     requestId = _sendRequest(req.encodeCBOR(), subscriptionId, GAS_LIMIT, DON_ID);
+
+    //     // maps: requestId --> recipient 
+    //     s_issueTo[requestId] = recipientAddress;
+
+    //     // creates: id reference.
+    //     houseId = _totalHouses;
+
+    //     // increments: the total number of houses.
+    //     _totalHouses++;
+
+    //     // appends and populates: new Houses struct (instance).
+    //     houseInfo.push(Houses({
+    //         houseId: houseId,
+    //         homeownerAddress: recipientAddress
+    //     }));
+
+    //     emit IssuedHouse(houseId, recipientAddress);
+    // }
 
     // updates: associated price details for a given `tokenId`.
     function updatePriceDetails(
@@ -255,6 +299,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
         requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, DON_ID);
     }
 
+    // sets: automationForwarderAddress.
     function setAutomationForwarder(address automationForwarderAddress) external onlyOwner {
         s_automationForwarderAddress = automationForwarderAddress;
     }

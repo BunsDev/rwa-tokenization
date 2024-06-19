@@ -10,6 +10,7 @@ const houses = require('./api/houses');
 
 // houses //
 router.get('/houses', houses.infos);
+router.get('/house/issue/:id', houses.issuedInfo);
 router.get('/house/:id', houses.houseInfo);
 
 router.get('/', noop);
