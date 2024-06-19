@@ -36,6 +36,17 @@ export type WeatherHistoryEntry = {
   country: string
 }
 
+export type HouseHistoryEntry = {
+  txHash: string
+  id: number
+  listPrice: number
+  originalPrice?: number
+  taxValue?: number
+  homeAddress?: string
+  yearBuilt?: number
+  squareFootage?: number
+}
+
 export type HouseResponse = {
   id: number
   listPrice: number

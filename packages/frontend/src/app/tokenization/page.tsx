@@ -39,7 +39,7 @@ export default async function Tokenization({
         <div>
           <ApiSwitch />
           <label className="text-base font-[450] text-card-foreground">
-            Parameters
+            Token ID
           </label>
           <TokenInput />
         </div>

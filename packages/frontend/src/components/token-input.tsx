@@ -30,7 +30,7 @@ export const TokenInput = () => {
   return (
     <>
       <div className="border-input my-2 flex w-full items-center space-x-1 rounded-md border bg-[#181D29] px-4 py-3">
-        <span className="text-base leading-5">@</span>
+        <span className="text-base leading-5"></span>
         <Input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
