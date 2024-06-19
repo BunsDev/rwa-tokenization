@@ -5,5 +5,8 @@
   "main": "index.js",
   "repository": "https://github.com/BunsDev/rwa-asset-tokenization.git",
   "author": "Buns Enchantress <bunsthedev@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/kv": "^2.0.0"
+  }
 }
