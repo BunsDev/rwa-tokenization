@@ -56,7 +56,6 @@ export type UserError = {
 export type DataResponse = {
   errors?: UserError[]
   user?: UserData
-  tweet?: TweetData
   media?: string[]
 }
 
@@ -65,51 +64,9 @@ export type UserDataResponse = {
   errors?: UserError[]
 }
 
-export type TweetData = {
-  edit_history_tweet_ids: string[]
-  id: string
-  text: string
-  created_at: string
-  attachments?: {
-    media_keys?: string[]
-  }
-}
-
 export type MediaData = {
   media_key: string
   type: 'animated_gif' | 'photo' | 'video'
   url?: string
   preview_image_url?: string
-}
-
-export type LastTweetsResponse = {
-  data: TweetData[]
-  includes?: {
-    media: MediaData[]
-  }
-}
-
-export type TweetMediaResponse = {
-  data?: TweetData
-  includes?: {
-    media: MediaData[]
-  }
-  errors?: {
-    parameters: {
-      [key: string]: string[]
-    }
-    message: string
-  }
-}
-
-export type TweetHistoryEntry = {
-  requestId: string
-  txHash: string
-  username: string
-  name: string
-  profileImageUrl: string
-  tweetText: string
-  timestamp: number
-  media: string[]
-  tweetId: string
 }

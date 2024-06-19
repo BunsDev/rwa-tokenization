@@ -50,11 +50,11 @@ export const ApiSwitch = () => {
                   />
                 </Link>
               )}
-              {(pathname === '/x' || pathname === '/') && (
+               {(pathname === '/' || pathname === '/rwa') && (
                 <Link
                   target="_blank"
                   rel="noreferrer"
-                  href="https://developer.twitter.com/"
+                  href="https://github.com/BunsDev/rwa-tokenization"
                   className={cn(buttonVariants({ variant: 'link' }), 'py-3')}
                 >
                   <Image
@@ -65,7 +65,7 @@ export const ApiSwitch = () => {
                     alt="x"
                   />
                   <span className="ml-2 mr-1 inline-block text-xl font-medium text-[#CED0D5]">
-                    X (formerly Twitter)
+                    Real Estate Tokens
                   </span>
                   <Image
                     src="/arrow-go-to-up.svg"
@@ -88,7 +88,7 @@ export const ApiSwitch = () => {
         </PopoverTrigger>
         <PopoverContent className="text-muted-foreground flex w-[var(--radix-popper-anchor-width)] flex-col bg-[#181D29] p-1">
           <Link
-            href="/x"
+            href="https://github.com/BunsDev/rwa-tokenization"
             className="flex items-center space-x-4 px-2 hover:rounded hover:bg-[#252E42]"
           >
             <Image
@@ -100,15 +100,15 @@ export const ApiSwitch = () => {
             />
             <div
               className={cn(
-                pathname === '/x' && 'text-foreground',
+                pathname === '/rwa' && 'text-foreground',
                 'flex flex-col space-y-2 py-3',
               )}
             >
               <span className="text-[16px] font-[500] leading-4">
-                X (formerly Twitter)
+                Real Estate Tokens
               </span>
               <span className="text-[14px] font-[450]">
-                Get a user&apos;s latest post and store it onchain.
+                Get a property&apos;s latest price.
               </span>
             </div>
           </Link>
