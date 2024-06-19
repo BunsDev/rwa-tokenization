@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from './ui/input'
 
-export const HandleInput = () => {
+export const TokenInput = () => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -14,15 +14,15 @@ export const HandleInput = () => {
   const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
-    const handle = searchParams.get('handle')
-    if (handle) {
-      setInputValue(handle)
+    const tokenId = searchParams.get('tokenId')
+    if (tokenId) {
+      setInputValue(tokenId)
     }
   }, [searchParams])
 
   const submit = () => {
     const newParams = new URLSearchParams({
-      handle: inputValue,
+      tokenId: inputValue,
     })
     router.push(`${pathname}?${newParams}`)
   }
@@ -35,7 +35,7 @@ export const HandleInput = () => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           className="placeholder:text-card-foreground border-0 p-0"
-          placeholder="X account handle"
+          placeholder="tokenId"
         />
       </div>
       <Button

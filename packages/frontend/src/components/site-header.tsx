@@ -11,7 +11,7 @@ export function SiteHeader() {
           <h1 className="font-medium leading-7">Chainlink</h1>
           <span className="font-medium leading-7 text-muted-foreground">|</span>
           <span className="font-[450] leading-7 text-muted-foreground">
-            Functions Demo
+            RWA Tokenization
           </span>
         </a>
         <MobileNav />

@@ -50,7 +50,7 @@ export const ApiSwitch = () => {
                   />
                 </Link>
               )}
-               {(pathname === '/' || pathname === '/rwa') && (
+               {(pathname === '/' || pathname === '/tokenization') && (
                 <Link
                   target="_blank"
                   rel="noreferrer"
@@ -100,7 +100,7 @@ export const ApiSwitch = () => {
             />
             <div
               className={cn(
-                pathname === '/rwa' && 'text-foreground',
+                pathname === '/tokenization' && 'text-foreground',
                 'flex flex-col space-y-2 py-3',
               )}
             >

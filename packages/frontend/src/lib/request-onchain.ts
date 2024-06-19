@@ -1,7 +1,7 @@
 import 'server-only'
 import { ethers } from 'ethers'
 import { realEstateABI, weatherConsumerABI } from '@/config/contracts'
-// import { Coordinates } from '@/types'
+import { Coordinates } from '@/types'
 
 /* WEATHER REQUEST */
 
@@ -28,6 +28,17 @@ export const getWeatherOnchain = async (requestId: string) => {
     latitude: result.lat,
     longitude: result.long,
   }
+}
+
+export const requestWeatherOnchain = async (location: Coordinates) => {
+  const contract = getWeatherContract()
+  const tx = await contract.requestWeatherInfo(
+    location.latitude.toString(),
+    location.longitude.toString(),
+  )
+  const receipt = await tx.wait()
+  const requestId = receipt?.logs[2].args[0] as string
+  return { tx, requestId }
 }
 
 /* RWA REQUEST */

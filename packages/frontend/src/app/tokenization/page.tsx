@@ -1,29 +1,32 @@
-import UnderTheHood from './tokenization/under-the-hood'
+import UnderTheHood from './under-the-hood'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { OffchainResponse } from './tokenization/offchain-response'
-import { OnchainData } from './tokenization/onchain-data'
+import { CityInput } from '@/components/city-input'
 import LoadingSpinner from '@/components/loading-spinner'
-import History from './tokenization/history'
-import { TokenInput } from '@/components/token-input'
+import { Coordinates } from '@/types'
+import History from './history'
+import { OffchainResponse } from './offchain-response'
+import { OnchainData } from './onchain-data'
 import { ApiSwitch } from '@/components/api-switch'
+import { TokenInput } from '@/components/token-input'
 
-export default async function HomePage({
+export default async function Tokenization({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
   const tokenId = searchParams['tokenId'] as string
 
+  // let tokenId: string | undefined
+
   return (
     <main className="container px-6 md:px-10">
-      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]">
+      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_1fr_4px_1fr]">
         {!tokenId && (
           <>
             <div>
               <h2 className="mb-4 text-2xl font-medium tracking-[-0.24px] md:mb-8 md:text-[32px] md:leading-[42px] md:tracking-[-0.64px]">
-                Retrieve Web2 data and store it on-chain using Chainlink
-                Functions.
+                Tokenize Real Estate with Chainlink Functions
               </h2>
               <p className="text-base text-muted-foreground md:text-xl">
                 Perform custom computation off-chain using Web2 data in your
@@ -111,31 +114,24 @@ export default async function HomePage({
               />
               <div className="mt-[-2px] grow border-l border-l-border" />
             </div>
-            <div>
+            {/* <div>
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/onchain.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
                   Onchain Data
                 </h3>
               </div>
-              <OnchainData tokenId={tokenId} />
-            </div>
+              <OnchainData
+                key={`onchain-${tokenId}`}
+                tokenId={tokenId}
+              />
+            </div> */}
           </>
         )}
       </div>
       <UnderTheHood>
         <History />
       </UnderTheHood>
-      <footer className="container px-6 py-10 md:px-10">
-        <h2 className="text-2xl font-medium">How It Works</h2>
-        <Image
-          src="/how-it-works-x.jpg"
-          width={1926}
-          height={1318}
-          alt="how-it-works"
-          className="mt-6 rounded-lg border border-border"
-        />
-      </footer>
     </main>
   )
 }
