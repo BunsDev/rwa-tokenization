@@ -36,9 +36,10 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     "if (infoResponse.error) {"
     "throw Error('Housing Info Request Error');"
     "}"
-    "const homeAddress = infoResponse.data.homeAddress;"
+    "const streetNumber = infoResponse.data.streetNumber;"
+    "const streetName = infoResponse.data.streetName;"
     "const yearBuilt = infoResponse.data.yearBuilt;"
-    "return Functions.encodeString([homeAddress, yearBuilt]);";
+    "return Functions.encodeString([streetNumber, streetName, yearBuilt]);";
 
   string private constant SOURCE_PRICE_INFO =
     "const id = args[0];"

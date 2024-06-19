@@ -16,7 +16,7 @@ export const OffchainResponse = async ({
 }: OffchainResponseProps) => {
   const houseData = await fetchHouse(tokenId)
 
-  const rawData = JSON.stringify(houseData)
+  const rawData = JSON.stringify(houseData, null, 3)
   const listPrice = getCurrentPrice(houseData)
   const parsedData = `${listPrice}`
 
@@ -33,7 +33,7 @@ export const OffchainResponse = async ({
       <div className="flex justify-between space-x-4">
         <div className="flex flex-col justify-end">
           <label className="mb-2 text-base font-[450] text-card-foreground">
-            Parsed Data / Chainlink Function Output
+           Chainlink Function Output
           </label>
           <div className="rounded bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground">
             {parsedData}
