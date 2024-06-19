@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { CSSProperties, useRef, useState, ReactNode } from 'react'
 import { createElement } from 'react-syntax-highlighter'
-import { CONTRACT_CODE, TABS } from '@/config/contract-code-weather'
+import { CONTRACT_CODE, TABS } from '@/config/contract-code-tokenization'
 import { siteConfig } from '@/config/site'
 
 const UnderTheHood = ({ children }: { children?: ReactNode }) => {
@@ -22,6 +22,7 @@ const UnderTheHood = ({ children }: { children?: ReactNode }) => {
         <h3 className="mb-9 text-2xl font-medium tracking-[-0.24px]">
           Under the Hood
         </h3>
+        {/* @ts-ignore */}
         {TABS.map(({ label, content, highlightedLines }, i) =>
           i === activeTab ? (
             <Button
@@ -121,7 +122,7 @@ const UnderTheHood = ({ children }: { children?: ReactNode }) => {
             <Link
               target="_blank"
               rel="noreferrer"
-              href="https://remix.ethereum.org/#url=https://github.com/smartcontractkit/run-functions-dapp/blob/main/contracts/contracts/WeatherConsumer.sol"
+              href="https://remix.ethereum.org/#url=https://github.com/BunsDev/rwa-tokenization/blob/main/packages/contracts/src/RealEstate.sol"
               className={cn(
                 buttonVariants({ variant: 'link' }),
                 'space-x-2 py-3',

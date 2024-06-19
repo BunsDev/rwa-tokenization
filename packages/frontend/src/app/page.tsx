@@ -6,7 +6,7 @@ import { OnchainData } from './tokenization/onchain-data'
 import LoadingSpinner from '@/components/loading-spinner'
 import History from './tokenization/history'
 import { TokenInput } from '@/components/token-input'
-import { ApiSwitch } from '@/components/api-switch'
+// import { ApiSwitch } from '@/components/api-switch'
 
 export default async function HomePage({
   searchParams,
@@ -17,13 +17,14 @@ export default async function HomePage({
 
   return (
     <main className="container px-6 md:px-10">
-      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]">
+      {/* md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" */}
+      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_1fr]"
+      >
         {!tokenId && (
           <>
             <div>
               <h2 className="mb-4 text-2xl font-medium tracking-[-0.24px] md:mb-8 md:text-[32px] md:leading-[42px] md:tracking-[-0.64px]">
-                Retrieve Web2 data and store it on-chain using Chainlink
-                Functions.
+              Tokenize Real Estate with Chainlink Functions
               </h2>
               <p className="text-base text-muted-foreground md:text-xl">
                 Perform custom computation off-chain using Web2 data in your
@@ -34,7 +35,7 @@ export default async function HomePage({
           </>
         )}
         <div>
-          <ApiSwitch />
+          {/* <ApiSwitch /> */}
           <label className="text-base font-[450] text-card-foreground">
             Token ID
           </label>
@@ -100,7 +101,7 @@ export default async function HomePage({
               </div>
               <div className="ml-[-1px] grow border-t border-t-border" />
             </div>
-            <div className="hidden w-[13px] flex-col md:flex">
+            {/* <div className="hidden w-[13px] flex-col md:flex">
               <div className="mb-[-2px] grow border-l border-l-border" />
               <Image
                 src="/angle.svg"
@@ -110,8 +111,9 @@ export default async function HomePage({
                 className="shrink-0 -translate-x-px"
               />
               <div className="mt-[-2px] grow border-l border-l-border" />
-            </div>
-            <div>
+            </div> */}
+            {/* TODO Add OnChain Data */}
+            {/* <div>
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/onchain.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
@@ -119,14 +121,14 @@ export default async function HomePage({
                 </h3>
               </div>
               <OnchainData tokenId={tokenId} />
-            </div>
+            </div> */}
           </>
         )}
       </div>
       <UnderTheHood>
         <History />
       </UnderTheHood>
-      <footer className="container px-6 py-10 md:px-10">
+      {/* <footer className="container px-6 py-10 md:px-10">
         <h2 className="text-2xl font-medium">How It Works</h2>
         <Image
           src="/how-it-works-x.jpg"
@@ -135,7 +137,7 @@ export default async function HomePage({
           alt="how-it-works"
           className="mt-6 rounded-lg border border-border"
         />
-      </footer>
+      </footer> */}
     </main>
   )
 }

@@ -25,7 +25,7 @@ export const OnchainData = ({
 
   useEffect(() => {
     const requestOnChainPrice = async () => {
-      const response = await fetch('/api/onchain-weather', {
+      const response = await fetch('/api/onchain-price', {
         method: 'POST',
         body: JSON.stringify(tokenId),
       })

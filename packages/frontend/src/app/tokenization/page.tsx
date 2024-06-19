@@ -6,8 +6,8 @@ import LoadingSpinner from '@/components/loading-spinner'
 import { Coordinates } from '@/types'
 import History from './history'
 import { OffchainResponse } from './offchain-response'
-import { OnchainData } from './onchain-data'
-import { ApiSwitch } from '@/components/api-switch'
+// import { OnchainData } from './onchain-data'
+// import { ApiSwitch } from '@/components/api-switch'
 import { TokenInput } from '@/components/token-input'
 
 export default async function Tokenization({
@@ -37,7 +37,7 @@ export default async function Tokenization({
           </>
         )}
         <div>
-          <ApiSwitch />
+          {/* <ApiSwitch /> */}
           <label className="text-base font-[450] text-card-foreground">
             Token ID
           </label>
