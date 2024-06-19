@@ -40,15 +40,14 @@ export type HouseHistoryEntry = {
   txHash: string
   id: string
   listPrice: number
-  // streetNumber: string
-  // streetName: string
-  homeAddress: string
+  streetNumber: number
+  streetName: string
   yearBuilt: number
   squareFootage: number
 }
 
 export type HouseResponse = {
-  id: number
+  id: string
   listPrice: number
   streetNumber: number
   streetName: string

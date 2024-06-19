@@ -49,12 +49,15 @@ export const getCurrentPrice = (houseReponse: HouseResponse) => {
   return listPrice
 }
 
-// export const getHomeAddress = (houseReponse: HouseResponse) => {
-//   const streetNumber = houseReponse.streetNumber ?? '0'
-//   const streetName = houseReponse.streetName ?? '0'
-//   const homeAddress = `${streetNumber} ${streetName}`
-//   return homeAddress
-// }
+export const getStreetNumber = (houseReponse: HouseResponse) => {
+  const streetNumber = houseReponse.streetNumber ?? 0
+  return streetNumber
+}
+
+export const getStreetName = (houseReponse: HouseResponse) => {
+  const streetName = houseReponse.streetName ?? '0'
+  return streetName
+}
 
 export const getYearBuilt = (houseReponse: HouseResponse) => {
   const yearBuilt = houseReponse.yearBuilt ?? 0
