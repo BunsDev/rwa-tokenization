@@ -99,7 +99,12 @@ contract RealEstate is
     /**
      * @notice Request `houseInfo` for a given `tokenId`
      */
-    function issueHouse(address recipientAddress) external {
+    function issueHouse(
+        address recipientAddress, 
+        string memory homeAddress, 
+        string memory yearBuilt,
+        string memory squareFootage
+    ) external {
         _totalHouses++;
         string memory tokenId = string(abi.encode(_totalHouses - 1));
 
@@ -111,7 +116,7 @@ contract RealEstate is
         requests[requestId].tokenId = tokenId;
 
         latestRequestId[tokenId] = requestId;
-
+        setURI(_totalHouses-1, homeAddress, yearBuilt, squareFootage);
         _safeMint(recipientAddress, _totalHouses - 1);
 
         emit HouseInfoRequested(requestId, tokenId);
@@ -141,12 +146,12 @@ contract RealEstate is
      * @param yearBuilt the address of the home.
      * @param squareFootage the address of the home.
      */
-    function _setURI(
+    function setURI( // todo: restrict to internals
         uint tokenId,
         string memory homeAddress,
         string memory yearBuilt,
         string memory squareFootage
-    ) internal {
+    ) public onlyOwner {
         // [then] create URI: with property details.
         string memory uri = Base64.encode(
             bytes(
@@ -194,22 +199,6 @@ contract RealEstate is
         string memory tokenId = requests[requestId].tokenId;
 
         if (requests[requestId].responseType == ResponseType.HouseInfo) {
-
-            // [then] decode: response to get property details.
-            (
-                string memory streetNumber,
-                string memory streetName,
-                string memory buildYear,
-                string memory squareFootage
-            ) = abi.decode(response, (string, string, string, string));
-            string memory homeAddress = string(abi.encodePacked(streetNumber, " ", streetName));
-            
-            homeAddresses[tokenId] = homeAddress;
-            buildYears[tokenId] = buildYear;
-            squareFootages[tokenId] = squareFootage;
-
-            _setURI(_totalHouses-1, homeAddress, buildYear, squareFootage);
-
             emit HouseInfoReceived(requestId, string(response));
         } else {
             // store: latest price for a given `requestId`.
