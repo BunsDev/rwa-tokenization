@@ -20,36 +20,6 @@ export const OnchainData = ({ handle }: OnchainDataProps) => {
   const [onchainData, setOnchainData] = useState()
   const [error, setError] = useState()
 
-  useEffect(() => {
-    const requestOnchainTweet = async () => {
-      const response = await fetch('/api/onchain-tweet', {
-        method: 'POST',
-        body: JSON.stringify({ username: handle }),
-      })
-      const result = await response?.json()
-      if (result.error) {
-        setError(result.error)
-        return
-      }
-      setTxHash(result.txHash)
-      setRequestId(result.requestId)
-    }
-    requestOnchainTweet()
-  }, [handle])
-
-  useEffect(() => {
-    if (!requestId) return
-
-    const interval = setInterval(async () => {
-      const response = await fetch(`/api/onchain-tweet?requestId=${requestId}`)
-      const result = await response.json()
-      if (result.text) {
-        clearInterval(interval)
-        setOnchainData(result.text)
-      }
-    }, 1000)
-  }, [requestId])
-
   if (error) {
     return (
       <div className="flex h-80 flex-col items-center justify-center space-y-2 rounded border border-[##252E42] bg-[#10141e]">
