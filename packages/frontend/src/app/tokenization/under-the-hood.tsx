@@ -129,7 +129,7 @@ const UnderTheHood = ({ children }: { children?: ReactNode }) => {
               )}
             >
               <span className="text-base font-medium leading-5 text-[#578AFF]">
-                Open in Remix
+                Remix Code
               </span>
               <Image
                 src="/external.svg"

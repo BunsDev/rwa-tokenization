@@ -38,8 +38,6 @@ const History = async () => {
                 {
                   id,
                   listPrice,
-                  originalPrice,
-                  taxValue,
                   homeAddress,
                   yearBuilt,
                   squareFootage,
