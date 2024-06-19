@@ -95,4 +95,4 @@ const result = Number(stringResult).toFixed(PRECISION).toString()
 
 console.log(`${FORECAST_METHOD} price forecast: %s`, stringResult)
 
-return Functions.encodeString(result || "Failed")
+return Functions.encode (result || "Failed")

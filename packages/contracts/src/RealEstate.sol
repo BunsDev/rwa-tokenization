@@ -1,351 +1,167 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0;
-
+pragma solidity ^0.8.19;
 import { FunctionsClient } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
-import { ConfirmedOwner } from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 import { FunctionsRequest } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
-import { FunctionsSource } from "./FunctionsSource.sol";
-// import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
-
-import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import { ERC721Burnable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { IERC20 } from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import { ConfirmedOwner } from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 
 /**
- * @title Chainlink Functions example on-demand consumer contract example
+ * @title Chainlink Functions example consuming Real Estate API
  */
-contract RealEstate is FunctionsClient, ConfirmedOwner,
-    ERC721, ERC721URIStorage, ERC721Burnable
- {
-    using FunctionsRequest for FunctionsRequest.Request;
-    using SafeERC20 for IERC20;
+contract RealEstate is FunctionsClient, ConfirmedOwner {
+  using FunctionsRequest for FunctionsRequest.Request;
 
-    FunctionsSource internal immutable i_functionsSource;
+  enum ResponseType {
+    HouseInfo,
+    LastPrice
+  }
 
-    // network-specific settings (todo verify target network configurations).
-    bytes32 public immutable DON_ID = bytes32(0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000);
-    address public immutable LINK_ADDRESS = address(0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846);
-    address public immutable FUNCTIONS_ROUTER_ADDRESS = address(0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0);
-    uint32 public immutable GAS_LIMIT = 300_000;
+  struct APIResponse {
+    ResponseType responseType;
+    string response;
+  }
 
-    uint private _totalHouses;
-    uint private _nextTokenId;
+  // Chainlink Functions script soruce code
+  string private constant SOURCE_HOUSE_INFO =
+    "const id = args[0];"
+    "const infoResponse = await Functions.makeHttpRequest({"
+    "url: `https://api.chateau.voyage/house/${id}`,"
+    "});"
+    "if (infoResponse.error) {"
+    "throw Error('Housing Info Request Error');"
+    "}"
+    "const homeAddress = infoResponse.data.homeAddress;"
+    "const yearBuilt = infoResponse.data.yearBuilt;"
+    "return Functions.encodeString([homeAddress, yearBuilt]);";
 
-    // stored variables
-    bytes32 public s_latestRequestId;
-    bytes public s_latestResponse;
-    bytes public s_latestError;
+  string private constant SOURCE_PRICE_INFO =
+    "const id = args[0];"
+    "const priceResponse = await Functions.makeHttpRequest({"
+    "url: `https://api.chateau.voyage/house/${id}`,"
+    "});"
+    "if (priceResponse.error) {"
+    "throw Error('Housing Price Request Error');"
+    "}"
+    "const price = priceResponse.data.listPrice;"
+    "return Functions.encodeString(price);";
 
-    address internal s_automationForwarderAddress;
-    address internal s_routerAddress;
+  bytes32 public donId; // DON ID for the Functions DON to which the requests are sent
+  uint64 private subscriptionId; // Subscription ID for the Chainlink Functions
+  uint32 private gasLimit; // Gas limit for the Chainlink Functions callbacks
 
-    // gets: homeownerAddress associated with a given `requestId`.
-    mapping(bytes32 requestId => address to) internal s_issueTo;
+  // Mapping of request IDs to API response info
+  mapping(bytes32 => APIResponse) public requests;
 
-    // gets: PriceDetails associated with a given `tokenId`.
-    mapping(uint tokenId => PriceDetails) internal s_priceDetails;
+  event HouseInfoRequested(bytes32 indexed requestId, string username);
+  event HouseInfoReceived(bytes32 indexed requestId, string response);
 
-    // gets: `houseId` associated with a given `tokenId`.
-    mapping(address homeownerAddress => uint[] tokenId) public housesByOwner;
+  event LastPriceRequested(bytes32 indexed requestId, string username);
+  event LastPriceReceived(bytes32 indexed requestId, string response);
 
-    // creates: Houses struct (immutable variables).
-    struct Houses {
-        uint houseId;
-        address homeownerAddress;
+  event RequestFailed(bytes error);
+
+  constructor(
+    address router,
+    bytes32 _donId,
+    uint64 _subscriptionId,
+    uint32 _gasLimit
+  ) FunctionsClient(router) ConfirmedOwner(msg.sender) {
+    donId = _donId;
+    subscriptionId = _subscriptionId;
+    gasLimit = _gasLimit;
+  }
+
+  /**
+   * @notice Request `houseInfo` for a given `tokenId`
+   * @param tokenId id of said token e.g. 0
+   */
+  function requestHouseInfo(string calldata tokenId) external {
+    string[] memory args = new string[](1);
+    args[0] = tokenId;
+    bytes32 requestId = _sendRequest(SOURCE_HOUSE_INFO, args);
+
+    requests[requestId].responseType = ResponseType.HouseInfo;
+    emit HouseInfoRequested(requestId, tokenId);
+  }
+
+  /**
+   * @notice Request `lastPrice` for a given `tokenId`
+   * @param tokenId id of said token e.g. 0
+   */
+  function requestLastPrice(string calldata tokenId) external {
+    string[] memory args = new string[](1);
+    args[0] = tokenId;
+    bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
+
+    requests[requestId].responseType = ResponseType.LastPrice;
+    emit LastPriceRequested(requestId, tokenId);
+  }
+
+  /**
+   * @notice Process the response from the executed Chainlink Functions script
+   * @param requestId The request ID
+   * @param response The response from the Chainlink Functions script
+   */
+  function _processResponse(bytes32 requestId, bytes memory response) private {
+    requests[requestId].response = string(response);
+    if (requests[requestId].responseType == ResponseType.HouseInfo) {
+      emit HouseInfoReceived(requestId, string(response));
+    } else {
+      emit LastPriceReceived(requestId, string(response));
     }
+  }
 
-    // houses info
-    Houses[] public houseInfo;
+  // CHAINLINK FUNCTIONS //
 
-    // emits: event containing the `houseId` and `homeownerAddress`.
-    event IssuedHouse(
-        uint indexed houseId,
-        address homeownerAddress
+  /**
+   * @notice Triggers an on-demand Functions request
+   * @param args String arguments passed into the source code and accessible via the global variable `args`
+   */
+  function _sendRequest(
+    string memory source,
+    string[] memory args
+  ) internal returns (bytes32 requestId) {
+    FunctionsRequest.Request memory req;
+    req.initializeRequest(
+      FunctionsRequest.Location.Inline, 
+      FunctionsRequest.CodeLanguage.JavaScript, 
+      source
     );
-
-    error LatestIssueInProgress();
-    error OnlyAutomationForwarderCanCall();
-
-    struct PriceDetails {
-        uint80 listPrice;
-        uint80 originalPrice;
-        uint80 taxValue;
+    if (args.length > 0) {
+      req.setArgs(args);
     }
+    requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donId);
+  }
 
-    modifier onlyAutomationForwarder() {
-        if (msg.sender != s_automationForwarderAddress) {
-            revert OnlyAutomationForwarderCanCall();
-        }
-        _;
+  /**
+   * @notice Fulfillment callback function
+   * @param requestId The request ID, returned by sendRequest()
+   * @param response Aggregated response from the user code
+   * @param err Aggregated error from the user code or from the execution pipeline
+   * Either response or error parameter will be set, but never both
+   */
+  function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
+    if (err.length > 0) {
+      emit RequestFailed(err);
+      return;
     }
+    _processResponse(requestId, response);
+  }
 
-    // emits: price reported event.
-    event PriceReported(bytes32 indexed requestId, uint timeStamp);
+  // OWNER //
 
-    // emits: OCRResponse event.
-    event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
+  /**
+   * @notice Set the DON ID
+   * @param newDonId New DON ID
+   */
+  function setDonId(bytes32 newDonId) external onlyOwner {
+    donId = newDonId;
+  }
 
-    constructor(address routerAddress)
-        ERC721("Tokenized Real Estate", "tRE")
-        FunctionsClient(routerAddress) 
-        ConfirmedOwner(msg.sender) 
-    {
-        i_functionsSource = new FunctionsSource();
-        s_routerAddress = routerAddress;
-        s_automationForwarderAddress = msg.sender;
-    }
-
-    // DEFAULT CONSUMER FUNCTIONS //
-    
-    /**
-     * @notice Triggers an on-demand Functions request using remote encrypted secrets
-     * @param source JavaScript source code
-     * @param secretsLocation Location of secrets (only Location.Remote & Location.DONHosted are supported)
-     * @param encryptedSecretsReference Reference pointing to encrypted secrets
-     * @param args String arguments passed into the source code and accessible via the global variable `args`
-     * @param bytesArgs Bytes arguments passed into the source code and accessible via the global variable `bytesArgs` as hex strings
-     * @param subscriptionId Subscription ID used to pay for request (FunctionsConsumer contract address must first be added to the subscription)
-     * @param callbackGasLimit Maximum amount of gas used to call the inherited `handleOracleFulfillment` method
-     */
-
-    function sendRequest(
-        string calldata source,
-        FunctionsRequest.Location secretsLocation,
-        bytes calldata encryptedSecretsReference,
-        string[] calldata args,
-        bytes[] calldata bytesArgs,
-        uint64 subscriptionId,
-        uint32 callbackGasLimit
-    ) external onlyOwner {
-        FunctionsRequest.Request memory req;
-        req.initializeRequest(
-            FunctionsRequest.Location.Inline,
-            FunctionsRequest.CodeLanguage.JavaScript,
-            source
-        );
-        req.secretsLocation = secretsLocation;
-        req.encryptedSecretsReference = encryptedSecretsReference;
-        if (args.length > 0) {
-            req.setArgs(args);
-        }
-        if (bytesArgs.length > 0) {
-            req.setBytesArgs(bytesArgs);
-        }
-        s_latestRequestId = _sendRequest(
-            req.encodeCBOR(),
-            subscriptionId,
-            callbackGasLimit,
-            DON_ID
-        );
-    }
-
-    /**
-     * @notice Store latest result/error
-     * @param requestId The request ID, returned by sendRequest()
-     * @param response Aggregated response from the user code
-     * @param err Aggregated error from the user code or from the execution pipeline
-     * Either response or error parameter will be set, but never both
-     */
-
-    function fulfillRequest(
-        bytes32 requestId,
-        bytes memory response,
-        bytes memory err
-    ) internal override {
-        s_latestResponse = response;
-        s_latestError = err;
-        s_latestRequestId = requestId;
-        
-        // emits: OCRResponse event.
-        emit OCRResponse(requestId, response, err);
-
-        //////////////////////////// [D] ////////////////////////////
-
-        // // converts: latest response to a (human-readable) string.
-        // latestForecast = string(abi.encodePacked(response));
-        // emit ForecastedPrice(latestForecast);
-
-        //////////////////////////// [D] ////////////////////////////
-    }
-
-    // function fulfillRequest(
-    //     bytes32 requestId,
-    //     bytes memory response,
-    //     bytes memory err
-    // ) internal override {
-    //     s_latestResponse = response;
-    //     s_latestError = err;
-    //     s_latestRequestId = requestId;
-
-    //    // emits: OCRResponse event.
-        // emit OCRResponse(requestId, response, err);
-
-    //     // [if] asset is requested for the first time.
-    //     if (s_latestRequestId == requestId) {
-    //         // [then] decode: response to get property details.
-    //         (
-    //             uint tokenId,
-    //             string memory homeAddress, 
-    //             uint yearBuilt, 
-    //             uint squareFootage
-    //         ) =
-    //             abi.decode(response, (uint, string, uint, uint));
-
-
-    //     // [then] increment: `tokenId`
-    //     // uint tokenId = 
-    //     _nextTokenId++;
-
-    //     // issueHouse(
-    //         // s_issueTo[requestId],
-    //     //     tokenId
-    //     // );
-
-    //     // [then] create URI: with property details.
-    //     string memory uri = Base64.encode(
-    //         bytes(
-    //             string(
-    //                 abi.encodePacked(
-    //                     '{"name": "Tokenized Real Estate",'
-    //                     '"description": "Tokenized Real Estate",',
-    //                     '"image": "",' '"attributes": [',
-    //                     '{"trait_type": "homeAddress",',
-    //                     '"value": ',
-    //                     homeAddress,
-    //                     "}",
-    //                     ',{"trait_type": "yearBuilt",',
-    //                     '"value": ',
-    //                     yearBuilt,
-    //                     "}",
-    //                     ',{"trait_type": "squareFootage",',
-    //                     '"value": ',
-    //                     squareFootage,
-    //                     "}",
-    //                     "]}"
-    //                 )
-    //             )
-    //         )
-    //     );
-
-    //     // [then] create: finalTokenURI: with metadata.
-    //     string memory finalTokenURI = string(abi.encodePacked("data:application/json;base64,", uri));
-    //     // [then] mint: [source] `tokenId` to the associated `issueTo` for a given `requestId`.
-    //     _safeMint(s_issueTo[requestId], tokenId);
-    //     // [then] set: tokenURI for a given `tokenId`, containing metadata.
-    //     _setTokenURI(tokenId, finalTokenURI);
-
-    //     // [else] update the price details for a given `tokenId`. 
-    //     } else {
-    //         (uint tokenId, uint listPrice, uint originalPrice, uint taxValue) =
-    //             abi.decode(response, (uint, uint, uint, uint));
-    //         // map: price details to the associated `tokenId`.
-    //         s_priceDetails[tokenId] = 
-    //             PriceDetails({
-    //                 listPrice: uint80(listPrice),
-    //                 originalPrice: uint80(originalPrice),
-    //                 taxValue: uint80(taxValue)
-    //             });
-        
-    //         emit PriceReported(requestId, block.timestamp);
-    //     }
-
-    // }
-
-    // // updates: `s_latestRequestId` and fulfills the request.
-    // function fulfillRequest(
-    //     bytes32 requestId, 
-    //     bytes memory response, 
-    //     bytes memory /* err */
-    // ) internal override {
-
-
-    // TOKENIZATION //
-
-    // assigns: `requestId` to a given recipient, which includes a request that pulls NFT metadata.
-    // function issueHouse(
-    //     address recipientAddress,
-    //     uint64 subscriptionId
-    // )
-    //     public
-    //     onlyOwner
-    //     returns (bytes32 requestId, uint houseId)
-    // {
-    //     // generates: request (`req`)
-    //     FunctionsRequest.Request memory req;
-    //     req.initializeRequestForInlineJavaScript(i_functionsSource.getNftMetadata());
-
-    //     string[] memory args = new string[](1);
-    //     args[0] = string(abi.encode(_nextTokenId++));
-
-    //     // // gets: requestId from the _sendRequest, which includes the encodeCBOR from the request (`req`).
-    //     requestId = _sendRequest(req.encodeCBOR(), subscriptionId, GAS_LIMIT, DON_ID);
-
-// [source] maps: requestId --> recipient 
-        // s_issueTo[requestId] = recipientAddress;
-
-    //     // creates: id reference.
-    //     houseId = _totalHouses;
-
-    //     // increments: the total number of houses.
-    //     _totalHouses++;
-
-    //     // appends and populates: new Houses struct (instance).
-    //     houseInfo.push(Houses({
-    //         houseId: houseId,
-    //         homeownerAddress: recipientAddress
-    //     }));
-
-    //     emit IssuedHouse(houseId, recipientAddress);
-    // }
-
-    // updates: associated price details for a given `tokenId`.
-    function updatePriceDetails(
-        uint tokenId, 
-        uint64 subscriptionId, 
-        uint32 gasLimit
-    )
-        external
-        onlyAutomationForwarder
-        returns (bytes32 requestId)
-    {
-        FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(i_functionsSource.getPrices());
-
-        string[] memory args = new string[](1);
-        args[0] = string(abi.encode(tokenId));
-
-        requestId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, DON_ID);
-    }
-
-    // sets: automationForwarderAddress.
-    function setAutomationForwarder(address automationForwarderAddress) external onlyOwner {
-        s_automationForwarderAddress = automationForwarderAddress;
-    }
-
-    // VIEW FUNCTIONS //
-    
-    // gets: price details for a given `tokenId`
-    function getPriceDetails(uint tokenId) external view returns (PriceDetails memory) {
-        return s_priceDetails[tokenId];
-    }
-
-    // shows: total houses available from brokerage firm.
-    function totalHouses() public view returns (uint) {
-        return _totalHouses;
-    }
-
-    // ERC721 SETTINGS //
-
-    // gets: tokenURI for a given `tokenId`.
-    function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory ) {
-        return super.tokenURI(tokenId);
-    }
-
-    // checks: interface is supported by this contract.
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) { 
-        return super.supportsInterface(interfaceId);
-    }
+  /**
+   * @notice Set the gas limit
+   * @param newGasLimit new gas limit
+   */
+  function setCallbackGasLimit(uint32 newGasLimit) external onlyOwner {
+    gasLimit = newGasLimit;
+  }
 }

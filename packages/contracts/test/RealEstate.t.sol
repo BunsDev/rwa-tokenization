@@ -16,7 +16,11 @@ contract RealEstateTest is BaseTest {
     address public chainlinkAutomationForwarder;
 
     uint public constant AVAX_FUJI_CHAIN_ID = 43113;
-
+    bytes32 public immutable DON_ID = bytes32(0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000);
+    // address public immutable LINK_ADDRESS = address(0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846);
+    // address public immutable FUNCTIONS_ROUTER_ADDRESS = address(0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0);
+    uint32 public immutable GAS_LIMIT = 300_000;
+    uint64 public immutable SUBSCRIPTION_ID = 9614;
   event SubscriptionCreated(uint64 indexed subscriptionId, address owner);
   event SubscriptionFunded(uint64 indexed subscriptionId, uint oldBalance, uint newBalance);
 //   event SubscriptionConsumerAdded(uint64 indexed subscriptionId, address consumer);
@@ -36,7 +40,10 @@ contract RealEstateTest is BaseTest {
 
         sRealEstate =
             new RealEstate(
-                address(functionsRouter)
+                address(functionsRouter),
+                DON_ID,             /// todo
+                SUBSCRIPTION_ID,    /// todo
+                GAS_LIMIT           /// todo
             );
 
         console.log(block.chainid);

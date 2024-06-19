@@ -1,0 +1,4 @@
+# Requests (testing)
+
+- 0x59e284246897a2d951774b8a6ded8c554a48badc28a1a1a2b1f4ad0755cc34d6: houseInfo(0)
+- 0xa97571abddcd4fe79a9614589805d83090191dd46c0cf486a4de0f11557c5134: price(0)
