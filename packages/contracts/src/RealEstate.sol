@@ -31,9 +31,6 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     address public immutable FUNCTIONS_ROUTER_ADDRESS = address(0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0);
     uint32 public immutable GAS_LIMIT = 300_000;
 
-    // reports: latestPrice response.
-    string public latestPrice;
-
     uint private _totalHouses;
     uint private _nextTokenId;
 
@@ -86,7 +83,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     }
 
     // emits: price reported event.
-    event PriceReported(bytes32 indexed requestId, string latestPrice, uint timeStamp);
+    event PriceReported(bytes32 indexed requestId, uint timeStamp);
 
     // emits: OCRResponse event.
     event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
@@ -102,7 +99,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     }
 
     // DEFAULT CONSUMER FUNCTIONS //
-
+    
     /**
      * @notice Triggers an on-demand Functions request using remote encrypted secrets
      * @param source JavaScript source code
@@ -113,6 +110,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
      * @param subscriptionId Subscription ID used to pay for request (FunctionsConsumer contract address must first be added to the subscription)
      * @param callbackGasLimit Maximum amount of gas used to call the inherited `handleOracleFulfillment` method
      */
+
     function sendRequest(
         string calldata source,
         FunctionsRequest.Location secretsLocation,
@@ -148,8 +146,8 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
      * @notice Store latest result/error
      * @param requestId The request ID, returned by sendRequest()
      * @param response Aggregated response from the user code
+     * @param err Aggregated error from the user code or from the execution pipeline
      * Either response or error parameter will be set, but never both
-     * @param err Aggregated response from the user code
      */
 
     function fulfillRequest(
@@ -159,73 +157,85 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     ) internal override {
         s_latestResponse = response;
         s_latestError = err;
-
-        // updates: latest request id.
         s_latestRequestId = requestId;
         
         // emits: OCRResponse event.
         emit OCRResponse(requestId, response, err);
 
-        // converts: latest response to a (human-readable) string.
-        latestPrice = string(abi.encodePacked(response));
-        emit PriceReported(requestId, latestPrice, block.timestamp);
+        //////////////////////////// [D] ////////////////////////////
+
+        // // converts: latest response to a (human-readable) string.
+        // latestForecast = string(abi.encodePacked(response));
+        // emit ForecastedPrice(latestForecast);
+
+        //////////////////////////// [D] ////////////////////////////
     }
 
-    // // updates: `s_latestRequestId` and fulfills the request.
     // function fulfillRequest(
-    //     bytes32 requestId, 
-    //     bytes memory response, 
-    //     bytes memory /* err */
+    //     bytes32 requestId,
+    //     bytes memory response,
+    //     bytes memory err
     // ) internal override {
+    //     s_latestResponse = response;
+    //     s_latestError = err;
+    //     s_latestRequestId = requestId;
+
+    //    // emits: OCRResponse event.
+        // emit OCRResponse(requestId, response, err);
+
     //     // [if] asset is requested for the first time.
     //     if (s_latestRequestId == requestId) {
     //         // [then] decode: response to get property details.
     //         (
+    //             uint tokenId,
     //             string memory homeAddress, 
     //             uint yearBuilt, 
     //             uint squareFootage
     //         ) =
-    //             abi.decode(response, (string, uint, uint));
+    //             abi.decode(response, (uint, string, uint, uint));
 
-    //         // [then] increment: `tokenId`
-    //         uint tokenId = _nextTokenId++;
 
-    //         // issueHouse(
-    //         //     s_issueTo[requestId],
-    //         //     tokenId
-    //         // );
+    //     // [then] increment: `tokenId`
+    //     // uint tokenId = 
+    //     _nextTokenId++;
 
-    //         // [then] create URI: with property details.
-    //         string memory uri = Base64.encode(
-    //             bytes(
-    //                 string(
-    //                     abi.encodePacked(
-    //                         '{"name": "Tokenized Real Estate",'
-    //                         '"description": "Tokenized Real Estate",',
-    //                         '"image": "",' '"attributes": [',
-    //                         '{"trait_type": "homeAddress",',
-    //                         '"value": ',
-    //                         homeAddress,
-    //                         "}",
-    //                         ',{"trait_type": "yearBuilt",',
-    //                         '"value": ',
-    //                         yearBuilt,
-    //                         "}",
-    //                         ',{"trait_type": "squareFootage",',
-    //                         '"value": ',
-    //                         squareFootage,
-    //                         "}",
-    //                         "]}"
-    //                     )
+    //     // issueHouse(
+    //         // s_issueTo[requestId],
+    //     //     tokenId
+    //     // );
+
+    //     // [then] create URI: with property details.
+    //     string memory uri = Base64.encode(
+    //         bytes(
+    //             string(
+    //                 abi.encodePacked(
+    //                     '{"name": "Tokenized Real Estate",'
+    //                     '"description": "Tokenized Real Estate",',
+    //                     '"image": "",' '"attributes": [',
+    //                     '{"trait_type": "homeAddress",',
+    //                     '"value": ',
+    //                     homeAddress,
+    //                     "}",
+    //                     ',{"trait_type": "yearBuilt",',
+    //                     '"value": ',
+    //                     yearBuilt,
+    //                     "}",
+    //                     ',{"trait_type": "squareFootage",',
+    //                     '"value": ',
+    //                     squareFootage,
+    //                     "}",
+    //                     "]}"
     //                 )
     //             )
-    //         );
-    //         // [then] create: finalTokenURI: with metadata.
-    //         string memory finalTokenURI = string(abi.encodePacked("data:application/json;base64,", uri));
-    //         // [then] mint: `tokenId` to the associated `issueTo` for a given `requestId`.
-    //         _safeMint(s_issueTo[requestId], tokenId);
-    //         // [then] set: tokenURI for a given `tokenId`, containing metadata.
-    //         _setTokenURI(tokenId, finalTokenURI);
+    //         )
+    //     );
+
+    //     // [then] create: finalTokenURI: with metadata.
+    //     string memory finalTokenURI = string(abi.encodePacked("data:application/json;base64,", uri));
+    //     // [then] mint: [source] `tokenId` to the associated `issueTo` for a given `requestId`.
+    //     _safeMint(s_issueTo[requestId], tokenId);
+    //     // [then] set: tokenURI for a given `tokenId`, containing metadata.
+    //     _setTokenURI(tokenId, finalTokenURI);
 
     //     // [else] update the price details for a given `tokenId`. 
     //     } else {
@@ -238,8 +248,19 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     //                 originalPrice: uint80(originalPrice),
     //                 taxValue: uint80(taxValue)
     //             });
+        
+    //         emit PriceReported(requestId, block.timestamp);
     //     }
+
     // }
+
+    // // updates: `s_latestRequestId` and fulfills the request.
+    // function fulfillRequest(
+    //     bytes32 requestId, 
+    //     bytes memory response, 
+    //     bytes memory /* err */
+    // ) internal override {
+
 
     // TOKENIZATION //
 
@@ -262,8 +283,8 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     //     // // gets: requestId from the _sendRequest, which includes the encodeCBOR from the request (`req`).
     //     requestId = _sendRequest(req.encodeCBOR(), subscriptionId, GAS_LIMIT, DON_ID);
 
-    //     // maps: requestId --> recipient 
-    //     s_issueTo[requestId] = recipientAddress;
+// [source] maps: requestId --> recipient 
+        // s_issueTo[requestId] = recipientAddress;
 
     //     // creates: id reference.
     //     houseId = _totalHouses;
