@@ -4,10 +4,16 @@ import { FunctionsClient } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/
 import { FunctionsRequest } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
 import { ConfirmedOwner } from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 
+import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { ERC721URIStorage } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import { ERC721Burnable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+
 /**
  * @title Chainlink Functions example consuming Real Estate API
  */
-contract RealEstate is FunctionsClient, ConfirmedOwner {
+contract RealEstate is FunctionsClient, ConfirmedOwner,
+    ERC721("Tokenized Real Estate", "tRE"), ERC721URIStorage, ERC721Burnable
+ {
   using FunctionsRequest for FunctionsRequest.Request;
 
   enum ResponseType {
@@ -174,4 +180,16 @@ contract RealEstate is FunctionsClient, ConfirmedOwner {
   function setCallbackGasLimit(uint32 newGasLimit) external onlyOwner {
     gasLimit = newGasLimit;
   }
+
+    // ERC721 SETTINGS //
+
+    // gets: tokenURI for a given `tokenId`.
+    function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory ) {
+        return super.tokenURI(tokenId);
+    }
+
+    // checks: interface is supported by this contract.
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) { 
+        return super.supportsInterface(interfaceId);
+    }
 }
