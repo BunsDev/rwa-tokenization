@@ -38,7 +38,7 @@ export type WeatherHistoryEntry = {
 
 export type HouseHistoryEntry = {
   txHash: string
-  id: string
+  tokenId: string
   listPrice: string
   streetNumber: string
   streetName: string
@@ -47,7 +47,7 @@ export type HouseHistoryEntry = {
 }
 
 export type HouseResponse = {
-  id: string
+  tokenId: string
   listPrice: string
   streetNumber: string
   streetName: string

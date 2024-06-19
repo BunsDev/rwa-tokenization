@@ -36,7 +36,7 @@ const History = async () => {
             {data.map(
               (
                 {
-                  id,
+                  tokenId,
                   listPrice,
                   streetNumber,
                   streetName,
