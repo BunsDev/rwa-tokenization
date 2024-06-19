@@ -10,9 +10,9 @@ const RealEstate = new web3.eth.Contract(REAL_ESTATE_ABI, REAL_ESTATE_ADDRESS)
 // generates: random integer.
 function getRandomInt(max, min) {
     const randInt 
-        = Math.floor(Math.random() * max) < min ? min
-            : Math.floor(Math.random() * max)
-    return randInt
+        = Math.floor(Math.random() * max) < min ? min.toString()
+            : (Math.floor(Math.random() * max)).toString()
+    return Number(randInt).toString()
 }
 
 async function getInfo() {
@@ -25,20 +25,21 @@ async function getInfo() {
 
 async function issueHouseInfo(ctx) {
     const id = Number(ctx.params.id)
+    const tokenId = id.toString()
 
     // pricing info //
     const listPrice = getRandomInt(1_000_000, 100_000)
 
     // metadata (`random`) //
-    const streetNumber = id * 1234 + 13
+    const streetNumber = (id * 1234 + 13).toString()
     const streetName = id % 2 == 0 ? `Easy Street` : id % 7 == 0 ? `Marine Avenue` : id % 13 == 0 ? `Chain Boulevard` : `Slinky Place`
     
     // metadata (`static`) //
-    const yearBuilt = 2024 - id < 1200 ? 1200 : 2024 - id
-    const squareFootage = id == 0 ? 3000 : id * 1113
+    const yearBuilt = 2024 - id < 1200 ? '1200' : (2024 - id).toString()
+    const squareFootage = id == 0 ? '3000' : (id * 1113).toString()
 
         return {
-            "id": id,
+            "id": tokenId,
             "listPrice": listPrice,
             "streetNumber": streetNumber,
             "streetName": streetName,
@@ -50,20 +51,21 @@ async function issueHouseInfo(ctx) {
 // todo: make this into information that is stored on the blockchain
 async function getHouseInfo(ctx) {
     const id = Number(ctx.params.id)
+    const tokenId = id.toString()
 
     // pricing info //
     const listPrice = getRandomInt(1_000_000, 100_000)
 
     // metadata (`random`) //
-    const streetNumber = id * 1234 + 13
+    const streetNumber = (id * 1234 + 13).toString()
     const streetName = id % 2 == 0 ? `Easy Street` : id % 7 == 0 ? `Marine Avenue` : id % 13 == 0 ? `Chain Boulevard` : `Slinky Place`
     
     // metadata (`static`) //
-    const yearBuilt = 2024 - id < 1200 ? 1200 : 2024 - id
-    const squareFootage = id == 0 ? 3000 : id * 1113
+    const yearBuilt = 2024 - id < 1200 ? '1200' : (2024 - id).toString()
+    const squareFootage = id == 0 ? '3000' : (id * 1113).toString()
 
         return {
-            "id": id,
+            "id": tokenId,
             "listPrice": listPrice,
             "streetNumber": streetNumber,
             "streetName": streetName,
