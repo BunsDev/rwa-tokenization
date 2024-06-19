@@ -55,9 +55,12 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
   uint64 private subscriptionId; // Subscription ID for the Chainlink Functions
   uint32 private gasLimit; // Gas limit for the Chainlink Functions callbacks
 
+  uint private _totalHouses;
+
   // Mapping of request IDs to API response info
   mapping(bytes32 => APIResponse) public requests;
   mapping(string => bytes32) public latestRequestId;
+  mapping(string => string) public latestPrice;
 
   event HouseInfoRequested(bytes32 indexed requestId, string tokenId);
   event HouseInfoReceived(bytes32 indexed requestId, string response);
@@ -80,9 +83,11 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
 
   /**
    * @notice Request `houseInfo` for a given `tokenId`
-   * @param tokenId id of said token e.g. 0
    */
-  function requestHouseInfo(string calldata tokenId) external {
+  function issueHouse(address recipientAddress) external {
+    _totalHouses++;
+    string memory tokenId = string(abi.encode(_totalHouses-1));
+    
     string[] memory args = new string[](1);
     args[0] = tokenId;
     bytes32 requestId = _sendRequest(SOURCE_HOUSE_INFO, args);
@@ -91,7 +96,9 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     requests[requestId].tokenId = tokenId;
 
     latestRequestId[tokenId] = requestId;
-  
+
+    _mint(recipientAddress, _totalHouses);
+
     emit HouseInfoRequested(requestId, tokenId);
   }
 
@@ -119,9 +126,13 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
    */
   function _processResponse(bytes32 requestId, bytes memory response) private {
     requests[requestId].response = string(response);
+    string memory tokenId = requests[requestId].tokenId;
+
     if (requests[requestId].responseType == ResponseType.HouseInfo) {
       emit HouseInfoReceived(requestId, string(response));
     } else {
+      // store: latest price for a given `requestId`.
+      latestPrice[tokenId] = string(response);
       emit LastPriceReceived(requestId, string(response));
     }
   }
@@ -191,5 +202,9 @@ contract RealEstate is FunctionsClient, ConfirmedOwner,
     // checks: interface is supported by this contract.
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) { 
         return super.supportsInterface(interfaceId);
+    }
+
+    function totalHouses() public view returns (uint) {
+      return _totalHouses;
     }
 }
