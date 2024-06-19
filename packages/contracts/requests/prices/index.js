@@ -4,7 +4,6 @@ const abiCoder = ethers.AbiCoder.defaultAbiCoder();
 const tokenId = args[0];
 
 const apiResponse = await Functions.makeHttpRequest({
-    // url: `https://api.bridgedataoutput.com/api/v2/OData/test/Property('P_5dba1fb94aa4055b9f29696f')?access_token=6baca547742c6f96a6ff71b138424f21`,
     url: `https://api.chateau.voyage/house/${tokenId}`,
 });
 

@@ -10,12 +10,12 @@ task(
   .addOptionalParam(
     "configpath",
     "Path to Functions request config file",
-    `${__dirname}/../../configs/prices.js`,
+    `${__dirname}/../../requests/prices/config.js`,
     types.string
   )
   .setAction(async (taskArgs) => {
     console.log(`Reading data from Functions consumer contract ${taskArgs.contract} on network ${network.name}`)
-    const consumerContractFactory = await ethers.getContractFactory("FunctionsConsumer")
+    const consumerContractFactory = await ethers.getContractFactory("RealEstate")
     const consumerContract = await consumerContractFactory.attach(taskArgs.contract)
 
     let latestError = await consumerContract.s_latestError()

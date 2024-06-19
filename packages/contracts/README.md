@@ -24,7 +24,7 @@ yarn
 #### Create Password
 Chainlink Functions enables you to securely share secrets with the DON. Secrets are encrypted with a password.
 ```
-yarn pw
+yarn signin
 ```
 Once the ecrpytion key is created with your desired password, you can safely share your secrets with the DON, which requires multiple nodes to decrypt with consensus.
 
@@ -76,7 +76,7 @@ npx hardhat func-sub-create --network <NETWORK_NAME> --amount <LINK_AMOUNT> --co
 ```
 
 ### 5. Make Requests
-Functions enable you to make requests via the consumer contract. Before requesting, make sure you have successfully compiled your Consumer Contract (`Brokerage.sol` // `RealEstate.sol`), otherwise the request will fail to process.
+Functions enable you to make requests via the consumer contract. Before requesting, make sure you have successfully compiled your Consumer Contract (`RealEstate.sol`), otherwise the request will fail to process.
 
 You may do this programmatically with: <br/>
 ```

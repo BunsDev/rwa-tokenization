@@ -1,3 +1,5 @@
 exports.deployConsumer = require("./deploy.js")
-exports.requestData = require("./read.js")
+exports.issueRequest = require("./issue.js")
+exports.readData = require("./read.js")
 exports.requestData = require("./request.js")
+exports.update = require("./update.js")

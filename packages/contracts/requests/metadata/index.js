@@ -1,6 +1,7 @@
 const { ethers } = await import('npm:ethers@6.10.0');
-
 const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+
+const tokenId = args[0];
 
 const apiResponse = await Functions.makeHttpRequest({
     url: `https://api.chateau.voyage/house/${tokenId}`,
@@ -17,13 +18,15 @@ console.log(`Lot Size Square Feet: ${squareFootage}`);
 // console.log(`Bedrooms: ${bedrooms}`);
 
 const encoded = abiCoder.encode([
-    `string`, 
     `uint256`, 
+    `string`,
+    `uint256`,
     `uint256`
-        // ,`uint256`
+    // ,`uint256`
 ], [
-    homeAddress, 
-    yearBuilt, 
+    tokenId, 
+    homeAddress,
+    yearBuilt,
     squareFootage
     //  ,bedrooms
 ]

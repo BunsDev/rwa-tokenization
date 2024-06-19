@@ -10,9 +10,6 @@
         - Lending Markets
 
 ## Smart Contracts
-- **Brokerage Firm**
-    - Brokerage issues tokenized Real Estate (houses) via the `Brokerage.sol` contract.
-
 - **Real Estate NFT**
     - Tokenized representation of a Real Estate Asset.
 

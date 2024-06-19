@@ -17,9 +17,13 @@ const SOLC_SETTINGS = {
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  defaultNetwork: "localFunctionsTestnet",
+  defaultNetwork: "avalancheFuji",
   solidity: {
     compilers: [
+      {
+        version: "0.8.20",
+        settings: SOLC_SETTINGS,
+      },
       {
         version: "0.8.19",
         settings: SOLC_SETTINGS,
@@ -60,6 +64,7 @@ module.exports = {
   contractSizer: {
     runOnCompile: false,
     only: [
+      "RealEstate",
       "FunctionsConsumer",
       "AutomatedFunctionsConsumer",
       "FunctionsBillingRegistry"

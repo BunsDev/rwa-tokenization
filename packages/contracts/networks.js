@@ -49,7 +49,9 @@ const networks = {
         gatewayUrls: ["https://01.functions-gateway.chain.link/", "https://02.functions-gateway.chain.link/"],
     },
     avalancheFuji: {
-        url: "https://api.avax-test.network/ext/bc/C/rpc",
+        // url: "https://api.avax-test.network/ext/bc/C/rpc",
+        url: 'https://ava-testnet.public.blastapi.io/ext/bc/C/rpc',
+        // url: 'https://rpc.ankr.com/avalanche_fuji',
         gasPrice: undefined,
         nonce: undefined,
         accounts,

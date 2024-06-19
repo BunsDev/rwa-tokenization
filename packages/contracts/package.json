@@ -10,18 +10,24 @@
     "test": "forge test -vv",
     "prices": "node script/getPrices.js",
     "metadata": "node script/getMetadata.js",
-    "deploy": "forge script script/Brokerage.s.sol:BrokerageScript --rpc-url https://rpc.ankr.com/avalanche_fuji --broadcast --verifier-url https://api.routescan.io/v2/network/testnet/evm/43113/etherscan --etherscan-api-key verifyContract",
-    "pw": "npx env-enc set-pw",
+
+    "deploy": "forge script script/RealEstate.s.sol:RealEstateScript --rpc-url https://api.avax-test.network/ext/bc/C/rpc --broadcast",
+    "signin": "npx env-enc set-pw",
     "setup": "npx env-enc set",
-    "subscribe": "npx hardhat func-sub-create --amount 5 --contract 0x59a008A860D69025eA468Ba724a2b549Df9C88F7",
-    "request": "npx hardhat func-request --network avalancheFuji --contract 0x59a008A860D69025eA468Ba724a2b549Df9C88F7 --subid 9614",
-    "read": "npx hardhat func-read --network avalancheFuji --contract 0x59a008A860D69025eA468Ba724a2b549Df9C88F7",
-    "flat": "forge flatten --output src/flats/Brokerage.sol src/Brokerage.sol "
+    "flat": "forge flatten --output src/flats/RealEstate.sol src/RealEstate.sol",
+    
+    "assign": "npx hardhat func-sub-add --network avalancheFuji --contract 0x1192BA8416276318A629624C119EFDC937282200 --subid 9614",
+    "request": "npx hardhat func-request --network avalancheFuji --contract 0x1192BA8416276318A629624C119EFDC937282200 --subid 9614",
+    "read": "npx hardhat func-read --network avalancheFuji --contract 0x1192BA8416276318A629624C119EFDC937282200",
+    
+    "update": "npx hardhat func-update --network avalancheFuji --contract 0x1192BA8416276318A629624C119EFDC937282200 --tokenid 0 --subid 9614",
+    "issue": "npx hardhat func-issue --network avalancheFuji --contract 0x1192BA8416276318A629624C119EFDC937282200 --to 0x6D3cF2d1D7e113a2687dF9080CC490e176F53760 --subid 9614",
+    
+    "create": "npx hardhat func-sub-create --network avalancheFuji --amount 2 --contract 0x1192BA8416276318A629624C119EFDC937282200"
     },
     "dependencies": {
       "@chainlink/env-enc": "^1.0.5",
-      "@chainlink/functions-toolkit": "^0.2.8",
-      "ethers": "^6.10.0"
+      "@chainlink/functions-toolkit": "^0.2.8"
     },
     "devDependencies": {
       "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",

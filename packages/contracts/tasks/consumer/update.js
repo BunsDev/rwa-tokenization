@@ -15,8 +15,9 @@ const {
   const path = require("path")
   const process = require("process")
   
-  task("func-request", "Initiates an on-demand request from a Functions consumer contract")
+  task("func-update", "Update price details ")
     .addParam("contract", "Address of the consumer contract to call")
+    .addParam("tokenid", "tokenId associated with the upate to be executed")
     .addParam("subid", "Billing subscription ID used to pay for the request")
     .addOptionalParam(
       "simulate",
@@ -40,13 +41,14 @@ const {
     .addOptionalParam(
       "configpath",
       "Path to Functions request config file",
-      `${__dirname}/../../requests/price/config.js`, // requestConfig
+      `${__dirname}/../../requests/prices/config.js`,
       types.string
     )
     .setAction(async (taskArgs, hre) => {
       // Get the required parameters
       const contractAddr = taskArgs.contract
       const subscriptionId = parseInt(taskArgs.subid)
+      const tokenId = parseInt(taskArgs.tokenid)
       const slotId = parseInt(taskArgs.slotid)
       const callbackGasLimit = parseInt(taskArgs.callbackgaslimit)
   
@@ -189,34 +191,31 @@ const {
       if (networks[network.name].nonce) {
         overrides.nonce = networks[network.name].nonce
       }
-      const requestTx = await consumerContract.sendRequest(
-        requestConfig.source,
-        requestConfig.secretsLocation,
-        encryptedSecretsReference,
-        requestConfig.args ?? [],
-        requestConfig.bytesArgs ?? [],
-        subscriptionId,
-        callbackGasLimit,
+      const issueTx = await consumerContract.updatePriceDetails(
+        tokenId,                             // address tokenId, 
+        subscriptionId,                               // uint64 subscriptionId,
+        callbackGasLimit,                              // uint32 gasLimit,
+        // todo: inspect if this is necessary.
         overrides
       )
-      const requestTxReceipt = await requestTx.wait(1)
+      const requestTxReceipt = await issueTx.wait(1)
       if (network.name !== "localFunctionsTestnet") {
         spinner.info(
           `Transaction confirmed, see ${
-            utils.getEtherscanURL(network.config.chainId) + "tx/" + requestTx.hash
+            utils.getEtherscanURL(network.config.chainId) + "tx/" + issueTx.hash
           } for more details.`
         )
       }
   
       // Listen for fulfillment
       spinner.start(
-        `Functions request has been initiated in transaction ${requestTx.hash} with request ID ${requestTxReceipt.events[2].args.id}. Note the request ID may change if a re-org occurs, but the transaction hash will remain constant.\nWaiting for fulfillment from the Decentralized Oracle Network...\n`
+        `Functions request has been initiated in transaction ${issueTx.hash} with request ID ${requestTxReceipt.events[2].args.id}. Note the request ID may change if a re-org occurs, but the transaction hash will remain constant.\nWaiting for fulfillment from the Decentralized Oracle Network...\n`
       )
   
       try {
         // Get response data
         const { requestId, totalCostInJuels, responseBytesHexstring, errorString, fulfillmentCode } =
-          await responseListener.listenForResponseFromTransaction(requestTx.hash)
+          await responseListener.listenForResponseFromTransaction(issueTx.hash)
   
         switch (fulfillmentCode) {
           case FulfillmentCode.FULFILLED:

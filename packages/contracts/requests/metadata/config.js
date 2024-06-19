@@ -17,7 +17,7 @@ const metadataConfig = {
     // secretsLocation: Location.DONHosted,
 
     // source code to be executed
-    source: fs.readFileSync("requests/metadata.js").toString(),
+    source: fs.readFileSync("requests/metadata/index.js").toString(),
 
     // (optional) accessed within the source code with `secrets.varName` (ie: secrets.apiKey), must be a string.
     secrets: { 
@@ -25,8 +25,8 @@ const metadataConfig = {
     },
 
     // args (array[""]): source code accesses via `args[index]`.
-    args: ["0"],       
-        
+    args: ["0"],
+
     // shows: expected type of the returned value.
     expectedReturnType: ReturnType.bytes,
   
