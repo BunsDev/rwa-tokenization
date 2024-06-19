@@ -24,7 +24,7 @@ export default async function HomePage({
           <>
             <div>
               <h2 className="mb-4 text-2xl font-medium tracking-[-0.24px] md:mb-8 md:text-[32px] md:leading-[42px] md:tracking-[-0.64px]">
-              Tokenize Real Estate with Chainlink Functions
+              Tokenize Real Estate with Functions
               </h2>
               <p className="text-base text-muted-foreground md:text-xl">
                 Perform custom computation off-chain using Web2 data in your
