@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import { console, Test } from "forge-std/Test.sol";
+import { Test } from "forge-std/Test.sol";
 
 contract BaseTest is Test {
   bool private s_baseTestInitialized;

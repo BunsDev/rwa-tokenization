@@ -17,6 +17,7 @@ contract RealEstate is FunctionsClient, ConfirmedOwner {
 
   struct APIResponse {
     ResponseType responseType;
+    string tokenId;
     string response;
   }
 
@@ -50,11 +51,12 @@ contract RealEstate is FunctionsClient, ConfirmedOwner {
 
   // Mapping of request IDs to API response info
   mapping(bytes32 => APIResponse) public requests;
+  mapping(string => bytes32) public latestRequestId;
 
-  event HouseInfoRequested(bytes32 indexed requestId, string username);
+  event HouseInfoRequested(bytes32 indexed requestId, string tokenId);
   event HouseInfoReceived(bytes32 indexed requestId, string response);
 
-  event LastPriceRequested(bytes32 indexed requestId, string username);
+  event LastPriceRequested(bytes32 indexed requestId, string tokenId);
   event LastPriceReceived(bytes32 indexed requestId, string response);
 
   event RequestFailed(bytes error);
@@ -80,6 +82,10 @@ contract RealEstate is FunctionsClient, ConfirmedOwner {
     bytes32 requestId = _sendRequest(SOURCE_HOUSE_INFO, args);
 
     requests[requestId].responseType = ResponseType.HouseInfo;
+    requests[requestId].tokenId = tokenId;
+
+    latestRequestId[tokenId] = requestId;
+  
     emit HouseInfoRequested(requestId, tokenId);
   }
 
@@ -93,6 +99,10 @@ contract RealEstate is FunctionsClient, ConfirmedOwner {
     bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
 
     requests[requestId].responseType = ResponseType.LastPrice;
+    requests[requestId].tokenId = tokenId;
+
+    latestRequestId[tokenId] = requestId;
+
     emit LastPriceRequested(requestId, tokenId);
   }
 
