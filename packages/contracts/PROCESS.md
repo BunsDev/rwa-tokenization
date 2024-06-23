@@ -16,15 +16,3 @@
     - uses: Zillow API
     - updates: metadata regularly
 3.  Issuance: doesn't cover verification of authentic ownership [outside scope] -- assumes.
-4.  Create: Real World Asset (RWA) Lending Protocol
-    - Collateral: (Tokenized) Real Estate Asset.
-    - Asset: USDC
-5. Calculate: Real Estate Value
-    - Uses a function that updates data.
-        - Informs latest data.
-    - Updates: valuation of the real estate asset.
-6. Calculate: LTV Ratio
-    - Amount (of the loan) / Valuation (step 5) * 100%
-    - Initial Threshold: 60%
-    - Luqation Factor: 75%
-7. WIP... @BunsDev TODO
