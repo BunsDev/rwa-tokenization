@@ -30,13 +30,15 @@ contract RealEstate is
         string response;
     }
 
-    struct House {
+    struct Houses {
+        string tokenId;
         address recipientAddress;
         string homeAddress; 
-        string yearBuilt;
+        string listPrice; 
         string squareFootage;
         string bedRooms;
         string bathRooms;
+        uint createTime;
     }
 
     // Chainlink Functions script source code.
@@ -59,10 +61,10 @@ contract RealEstate is
 
     // Mapping of request IDs to API response info
     mapping(bytes32 => APIResponse) public requests;
-    mapping(uint => House) public houseInfo;
     mapping(string => bytes32) public latestRequestId;
-
     mapping(string tokenId => string price) public latestPrice;
+
+    Houses[] public houseInfo;
 
     event LastPriceRequested(bytes32 indexed requestId, string tokenId);
     event LastPriceReceived(bytes32 indexed requestId, string response);
@@ -86,7 +88,7 @@ contract RealEstate is
     function issueHouse(
         address recipientAddress, 
         string memory homeAddress, 
-        string memory yearBuilt,
+        string memory listPrice,
         string memory squareFootage,
         string memory bedRooms,
         string memory bathRooms
@@ -98,19 +100,21 @@ contract RealEstate is
         _totalHouses++;
 
         // [then] create: instance of a House.
-        House memory house = House(
-            recipientAddress,
-            homeAddress,
-            yearBuilt,
-            squareFootage,
-            bedRooms,
-            bathRooms
-        );
+       houseInfo.push(Houses({
+            tokenId: tokenId,
+            recipientAddress: recipientAddress,
+            homeAddress: homeAddress,
+            listPrice: listPrice,
+            squareFootage: squareFootage,
+            bedRooms: bedRooms,
+            bathRooms: bathRooms,
+            createTime: block.timestamp
+        }));
 
         setURI(
             index,
-            homeAddress, 
-            yearBuilt, 
+            homeAddress,
+            listPrice, 
             squareFootage,
             bedRooms,
             bathRooms
@@ -139,7 +143,7 @@ contract RealEstate is
      * @notice Construct and store a URI containing the off-chain data.
      * @param tokenId the tokenId associated with the home.
      * @param homeAddress the address of the home.
-     * @param yearBuilt year the home was built.
+     * @param listPrice year the home was built.
      * @param squareFootage size of the home (in ft^2)
      * @param bedRooms number of bedrooms in the home.
      * @param bathRooms number of bathrooms in the home.
@@ -147,7 +151,7 @@ contract RealEstate is
     function setURI( // todo: restrict to internals
         uint tokenId,
         string memory homeAddress,
-        string memory yearBuilt,
+        string memory listPrice,
         string memory squareFootage,
         string memory bedRooms,
         string memory bathRooms
@@ -165,9 +169,9 @@ contract RealEstate is
                         '"value": ',
                         homeAddress,
                         "}",
-                        ',{"trait_type": "yearBuilt",',
+                        ',{"trait_type": "listPrice",',
                         '"value": ',
-                        yearBuilt,
+                        listPrice,
                         "}",
                         ',{"trait_type": "squareFootage",',
                         '"value": ',

@@ -54,6 +54,7 @@ async function getHouseInfo(ctx) {
     const tokenId = id.toString()
 
     // pricing info //
+    // todo: make it pull from contract data and add $1000 daily
     const listPrice = getRandomInt(1_000_000, 100_000)
 
     // metadata (`random`) //
