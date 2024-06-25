@@ -1,6 +1,6 @@
 # Housing Market (Mock) API
 
-API configurations designed for the purposes of fulfilling data requests for CMC and CoinGecko as well as for integration with frontends.
+API configurations designed for the purposes of fulfilling (mock) data requests for tokenized real estate.
 
 ---
 
