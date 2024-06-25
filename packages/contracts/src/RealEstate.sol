@@ -148,14 +148,14 @@ contract RealEstate is
      * @param bedRooms number of bedrooms in the home.
      * @param bathRooms number of bathrooms in the home.
      */
-    function setURI( // todo: restrict to internals
+    function setURI(
         uint tokenId,
         string memory homeAddress,
         string memory listPrice,
         string memory squareFootage,
         string memory bedRooms,
         string memory bathRooms
-    ) public onlyOwner {
+    ) internal {
         // [then] create URI: with property details.
         string memory uri = Base64.encode(
             bytes(
