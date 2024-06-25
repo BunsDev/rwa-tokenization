@@ -13,9 +13,6 @@
 - **Real Estate NFT**
     - Tokenized representation of a Real Estate Asset.
 
-- **Rental Market**
-    - Allows owners of tRE to rent out their house for a fraction of the home value.
-
 ## User Interface
 - **View Houses**
     - View tokenized real estate properties (houses).
