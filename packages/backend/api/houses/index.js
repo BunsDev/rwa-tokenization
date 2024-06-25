@@ -52,26 +52,32 @@ async function issueHouseInfo(ctx) {
 async function getHouseInfo(ctx) {
     const id = Number(ctx.params.id)
     const tokenId = id.toString()
-
-    // pricing info //
-    // todo: make it pull from contract data and add $1000 daily
-    const listPrice = getRandomInt(1_000_000, 100_000)
-
-    // metadata (`random`) //
-    const streetNumber = (id * 1234 + 13).toString()
-    const streetName = id % 2 == 0 ? `Easy Street` : id % 7 == 0 ? `Marine Avenue` : id % 13 == 0 ? `Chain Boulevard` : `Slinky Place`
+    const houseInfo = await RealEstate.methods.houseInfo(tokenId).call()
     
-    // metadata (`static`) //
-    const yearBuilt = 2024 - id < 1200 ? '1200' : (2024 - id).toString()
-    const squareFootage = id == 0 ? '3000' : (id * 1113).toString()
+    // pricing info //
+    const listPrice = new BN(houseInfo.listPrice).toString()
+    const createTime = new BN(houseInfo.createTime).toString()
+    const daysPassed = new BN(createTime).sub(new BN(Date.now())).div(86_400).toString()
+    // adds: $1000 daily to the list price.
+    const latestValue = Number(listPrice) + (Number(daysPassed) * 1000)
+
+    // metadata //
+    const streetNumber = new BN(houseInfo.streetNumber).toString()
+    const streetName = houseInfo.streetName
+    const squareFootage = houseInfo.squareFootage
+    const bedRooms = houseInfo.bedRooms
+    const bathRooms = houseInfo.bathRooms
 
         return {
             "id": tokenId,
             "listPrice": listPrice,
             "streetNumber": streetNumber,
             "streetName": streetName,
-            "yearBuilt": yearBuilt,
+            "latestValue": latestValue,
             "squareFootage": squareFootage,
+            "bedRooms": bedRooms,
+            "bathRooms": bathRooms,
+            "daysPassed": daysPassed,
         }
 }
 

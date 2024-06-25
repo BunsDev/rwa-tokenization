@@ -50,7 +50,7 @@ contract RealEstate is
         "if (priceResponse.error) {"
         "throw Error('Housing Price Request Error');"
         "}"
-        "const price = priceResponse.data.listPrice;"
+        "const price = priceResponse.data.latestValue;"
         "return Functions.encodeString(price);";
 
     bytes32 public donId; // DON ID for the Functions DON to which the requests are sent
