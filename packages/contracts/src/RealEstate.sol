@@ -25,32 +25,21 @@ contract RealEstate is
     using FunctionsRequest for FunctionsRequest.Request;
     using SafeERC20 for IERC20;
 
-    enum ResponseType {
-        HouseInfo,
-        LastPrice
-    }
-
     struct APIResponse {
-        ResponseType responseType;
         string tokenId;
         string response;
     }
 
-    // Chainlink Functions script soruce code
-    string private constant SOURCE_HOUSE_INFO =
-        "const id = args[0];"
-        "const infoResponse = await Functions.makeHttpRequest({"
-        "url: `https://api.chateau.voyage/house/${id}`,"
-        "});"
-        "if (infoResponse.error) {"
-        "throw Error('Housing Info Request Error');"
-        "}"
-        "const streetNumber = infoResponse.data.streetNumber;"
-        "const streetName = infoResponse.data.streetName;"
-        "const yearBuilt = infoResponse.data.yearBuilt;"
-        "const squareFootage = infoResponse.data.squareFootage;"
-        "return Functions.encodeString([streetNumber, streetName, yearBuilt, squareFootage]);";
+    struct House {
+        address recipientAddress;
+        string homeAddress; 
+        string yearBuilt;
+        string squareFootage;
+        string bedRooms;
+        string bathRooms;
+    }
 
+    // Chainlink Functions script source code.
     string private constant SOURCE_PRICE_INFO =
         "const id = args[0];"
         "const priceResponse = await Functions.makeHttpRequest({"
@@ -70,15 +59,10 @@ contract RealEstate is
 
     // Mapping of request IDs to API response info
     mapping(bytes32 => APIResponse) public requests;
+    mapping(uint => House) public houseInfo;
     mapping(string => bytes32) public latestRequestId;
 
     mapping(string tokenId => string price) public latestPrice;
-    mapping(string tokenId => string homeAddress) public homeAddresses;
-    mapping(string tokenId => string yearBuilt) public buildYears;
-    mapping(string tokenId => string squareFootage) public squareFootages;
-
-    event HouseInfoRequested(bytes32 indexed requestId, string tokenId);
-    event HouseInfoReceived(bytes32 indexed requestId, string response);
 
     event LastPriceRequested(bytes32 indexed requestId, string tokenId);
     event LastPriceReceived(bytes32 indexed requestId, string response);
@@ -103,23 +87,36 @@ contract RealEstate is
         address recipientAddress, 
         string memory homeAddress, 
         string memory yearBuilt,
-        string memory squareFootage
+        string memory squareFootage,
+        string memory bedRooms,
+        string memory bathRooms
     ) external {
+        uint index = _totalHouses;
+        string memory tokenId = string(abi.encode(index));
+
+        // increase totalHouses.
         _totalHouses++;
-        string memory tokenId = string(abi.encode(_totalHouses - 1));
 
-        string[] memory args = new string[](1);
-        args[0] = tokenId;
-        bytes32 requestId = _sendRequest(SOURCE_HOUSE_INFO, args);
+        // [then] create: instance of a House.
+        House memory house = House(
+            recipientAddress,
+            homeAddress,
+            yearBuilt,
+            squareFootage,
+            bedRooms,
+            bathRooms
+        );
 
-        requests[requestId].responseType = ResponseType.HouseInfo;
-        requests[requestId].tokenId = tokenId;
+        setURI(
+            index,
+            homeAddress, 
+            yearBuilt, 
+            squareFootage,
+            bedRooms,
+            bathRooms
+        );
 
-        latestRequestId[tokenId] = requestId;
-        setURI(_totalHouses-1, homeAddress, yearBuilt, squareFootage);
-        _safeMint(recipientAddress, _totalHouses - 1);
-
-        emit HouseInfoRequested(requestId, tokenId);
+        _safeMint(recipientAddress, index);
     }
 
     /**
@@ -130,8 +127,7 @@ contract RealEstate is
         string[] memory args = new string[](1);
         args[0] = tokenId;
         bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
-
-        requests[requestId].responseType = ResponseType.LastPrice;
+        // maps: `tokenId` associated with a given `requestId`.
         requests[requestId].tokenId = tokenId;
 
         latestRequestId[tokenId] = requestId;
@@ -143,14 +139,18 @@ contract RealEstate is
      * @notice Construct and store a URI containing the off-chain data.
      * @param tokenId the tokenId associated with the home.
      * @param homeAddress the address of the home.
-     * @param yearBuilt the address of the home.
-     * @param squareFootage the address of the home.
+     * @param yearBuilt year the home was built.
+     * @param squareFootage size of the home (in ft^2)
+     * @param bedRooms number of bedrooms in the home.
+     * @param bathRooms number of bathrooms in the home.
      */
     function setURI( // todo: restrict to internals
         uint tokenId,
         string memory homeAddress,
         string memory yearBuilt,
-        string memory squareFootage
+        string memory squareFootage,
+        string memory bedRooms,
+        string memory bathRooms
     ) public onlyOwner {
         // [then] create URI: with property details.
         string memory uri = Base64.encode(
@@ -172,6 +172,14 @@ contract RealEstate is
                         ',{"trait_type": "squareFootage",',
                         '"value": ',
                         squareFootage,
+                        "}",
+                        ',{"trait_type": "bedRooms",',
+                        '"value": ',
+                        bedRooms,
+                        "}",
+                        ',{"trait_type": "bathRooms",',
+                        '"value": ',
+                        bathRooms,
                         "}",
                         "]}"
                     )
@@ -195,16 +203,12 @@ contract RealEstate is
         bytes32 requestId,
         bytes memory response
     ) private {
-        requests[requestId].response = string(response);
-        string memory tokenId = requests[requestId].tokenId;
+            requests[requestId].response = string(response);
+            string memory tokenId = requests[requestId].tokenId;
 
-        if (requests[requestId].responseType == ResponseType.HouseInfo) {
-            emit HouseInfoReceived(requestId, string(response));
-        } else {
             // store: latest price for a given `requestId`.
             latestPrice[tokenId] = string(response);
             emit LastPriceReceived(requestId, string(response));
-        }
     }
 
     // CHAINLINK FUNCTIONS //
