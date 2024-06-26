@@ -7,7 +7,7 @@ import {
   getCurrentWeatherCode,
 } from './fetch-weather'
 import { getUnixTime } from 'date-fns'
-import { fetchHouse, getCurrentPrice, getHomeAddress, getSquareFootage, getYearBuilt } from './fetch-house'
+import { fetchHouse, getCurrentPrice, getHomeAddress, getSquareFootage } from './fetch-house'
 
 const DEFAULT_PROFILE_IMAGE =
   'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'
