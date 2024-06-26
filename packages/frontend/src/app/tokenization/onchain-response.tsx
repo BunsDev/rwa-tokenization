@@ -2,25 +2,25 @@ import CodeBlock from '@/components/code-block'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   fetchHouse,
+  fetchOnChainHouse,
   getCurrentPrice,
   getListPrice
 } from '@/lib/fetch-house'
 import { firaCode } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 
-type OffchainResponseProps = {
+type OnchainResponseProps = {
   tokenId: string
 }
 
-export const OffchainResponse = async ({
+export const OnchainResponse = async ({
   tokenId,
-}: OffchainResponseProps) => {
-  const houseData = await fetchHouse(tokenId)
+}: OnchainResponseProps) => {
+  const houseData = await fetchOnChainHouse(tokenId)
 
-  // const rawData = houseData
   const rawData = JSON.stringify(houseData, null, 3)
-  const listPrice = getListPrice(houseData)
-  const parsedData = `${listPrice}`
+  const latestValue = getCurrentPrice(houseData)
+  const parsedData = `${latestValue}`
 
   return (
     <>

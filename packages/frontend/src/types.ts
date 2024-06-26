@@ -40,6 +40,7 @@ export type HouseHistoryEntry = {
   txHash: string
   tokenId: string
   listPrice: string
+  latestValue: string
   homeAddress: string
   squareFootage: string
 }
@@ -47,6 +48,7 @@ export type HouseHistoryEntry = {
 export type HouseResponse = {
   tokenId: string
   listPrice: string
+  latestValue: string
   homeAddress: string
   squareFootage: string
 }

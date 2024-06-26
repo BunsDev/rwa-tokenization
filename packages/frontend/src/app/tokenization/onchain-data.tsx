@@ -44,7 +44,7 @@ export const OnchainData = ({
     if (!requestId) return
     const interval = setInterval(async () => {
       const response = await fetch(
-        `/api/onchain-weather?requestId=${requestId}`,
+        `/api/onchain-price?requestId=${requestId}`,
       )
       const result = await response.json()
       if (result.data) {

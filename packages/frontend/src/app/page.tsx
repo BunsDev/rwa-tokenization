@@ -6,6 +6,7 @@ import { OnchainData } from './tokenization/onchain-data'
 import LoadingSpinner from '@/components/loading-spinner'
 import History from './tokenization/history'
 import { TokenInput } from '@/components/token-input'
+import { OnchainResponse } from './tokenization/onchain-response'
 // import { ApiSwitch } from '@/components/api-switch'
 
 export default async function HomePage({
@@ -122,7 +123,7 @@ export default async function HomePage({
                 </h3>
               </div>
               {/* <OnchainData tokenId={tokenId} /> */}
-              <OffchainResponse tokenId={tokenId} />
+              <OnchainResponse tokenId={tokenId} />
             </div>
           </>
         )}
