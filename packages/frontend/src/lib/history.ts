@@ -7,7 +7,7 @@ import {
   getCurrentWeatherCode,
 } from './fetch-weather'
 import { getUnixTime } from 'date-fns'
-import { fetchHouse, getCurrentPrice, getHomeAddress, getSquareFootage } from './fetch-house'
+import { fetchHouse, getCurrentPrice, getHomeAddress, getLatestValue, getSquareFootage } from './fetch-house'
 
 const DEFAULT_PROFILE_IMAGE =
   'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'
@@ -76,11 +76,13 @@ export const addToHouseHistory = async ({
   const listPrice = getCurrentPrice(data)
   const homeAddress = getHomeAddress(data)
   const squareFootage = getSquareFootage(data)
+  const latestValue = getLatestValue(data)
   // const media = data.media ?? []
   const houseEntry: HouseHistoryEntry = {
     txHash,
     tokenId,
     listPrice,
+    latestValue,
     homeAddress,
     squareFootage,
   }

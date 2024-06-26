@@ -64,7 +64,7 @@ export const getCurrentPrice = (houseReponse: HouseResponse) => {
   return latestValue
 }
 
-export const getlatestValue = (houseReponse: HouseResponse) => {
+export const getLatestValue = (houseReponse: HouseResponse) => {
   const latestValue = houseReponse.latestValue ?? '0'
   return latestValue
 }
