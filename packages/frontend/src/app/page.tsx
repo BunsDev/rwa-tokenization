@@ -18,9 +18,11 @@ export default async function HomePage({
 
   return (
     <main className="container px-6 md:px-10">
-      {/* md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" */}
-      {/* md:grid-cols-[1fr_4px_1fr]" */}
-      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" 
+      <div className={
+        !tokenId 
+          ? "grid gap-0 border-b border-b-border py-10 md:grid-cols-[2fr_4px_minmax(0,_1fr)_4px_0fr]" 
+          : "grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" 
+      }
       >
         {!tokenId && (
           <>
@@ -128,9 +130,8 @@ export default async function HomePage({
           </>
         )}
       </div>
-      <UnderTheHood>
-        <History />
-      </UnderTheHood>
+      <UnderTheHood />
+      {/* @todo */}
       {/* <footer className="container px-6 py-10 md:px-10">
         <h2 className="text-2xl font-medium">How It Works</h2>
         <Image
