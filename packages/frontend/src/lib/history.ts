@@ -71,7 +71,7 @@ export const addToHouseHistory = async ({
 
   const data = await fetchHouse(tokenId)
 
-  const id = data.id ?? '0'
+  // const id = data.tokenId ?? '0'
   // const profileImageUrl = DEFAULT_PROFILE_IMAGE
   const listPrice = getCurrentPrice(data)
   const streetNumber = getStreetNumber(data)
@@ -81,7 +81,7 @@ export const addToHouseHistory = async ({
   // const media = data.media ?? []
   const houseEntry: HouseHistoryEntry = {
     txHash,
-    id,
+    tokenId,
     listPrice,
     streetName,
     streetNumber,
