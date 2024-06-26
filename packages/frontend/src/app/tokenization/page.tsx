@@ -1,9 +1,8 @@
 import UnderTheHood from './under-the-hood'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { CityInput } from '@/components/city-input'
 import LoadingSpinner from '@/components/loading-spinner'
-import History from './history'
+// import History from './history'
 import { OffchainResponse } from './offchain-response'
 import { TokenInput } from '@/components/token-input'
 
@@ -115,7 +114,7 @@ export default async function Tokenization({
         )}
       </div>
       <UnderTheHood>
-        <History />
+        {/* <History /> */}
       </UnderTheHood>
     </main>
   )

@@ -3,7 +3,7 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { kv } from '@vercel/kv'
 
 import { getHouseOnChain, requestHouseOnChain } from '@/lib/request-onchain'
-import { addToHouseHistory } from '@/lib/history'
+// import { addToHouseHistory } from '@/lib/history'
 
 const ratelimit = new Ratelimit({
   redis: kv,
@@ -37,11 +37,11 @@ export async function POST(request: NextRequest) {
     txHash: result.tx.hash,
   }
   try {
-    await addToHouseHistory({
-      txHash: data.txHash,
-      requestId: data.requestId,
-      tokenId: params.tokenId,
-    })
+    // await addToHouseHistory({
+    //   txHash: data.txHash,
+    //   requestId: data.requestId,
+    //   tokenId: params.tokenId,
+    // })
   } catch (error) {
     console.log('Adding request to history failed.')
   }
