@@ -53,13 +53,15 @@ async function getHouseInfo(ctx) {
     const id = Number(ctx.params.id)
     const tokenId = id.toString()
     const houseInfo = await RealEstate.methods.houseInfo(tokenId).call()
-    
-    // pricing info //
-    const listPrice = new BN(houseInfo.listPrice).toString()
-    const createTime = new BN(houseInfo.createTime).toString()
-    const daysPassed = new BN(createTime).sub(new BN(Date.now())).div(86_400).toString()
-    const latestValue = Number(listPrice) + (Number(daysPassed) * 1000) // adds: $1000 daily to the list price.
+    // time refactoring //
+    const createTime = Number(houseInfo.createTime)
+    const nowTime = Math.floor(Number(Date.now()) / 1000)
+    const daysPassed =  Math.floor((nowTime - createTime) / 86_400)
 
+    // pricing info //
+    const listPrice = Number(houseInfo.listPrice)
+    const latestValue = Number(listPrice) + (Number(daysPassed) * 1_000) // adds: $1000 daily to the list price.
+ 
     // metadata //
     const squareFootage = houseInfo.squareFootage
     const homeAddress = houseInfo.homeAddress
@@ -75,6 +77,7 @@ async function getHouseInfo(ctx) {
             "bedRooms": bedRooms,
             "bathRooms": bathRooms,
             "daysPassed": daysPassed,
+            "needsUpdate": daysPassed > 0,
         }
 }
 
