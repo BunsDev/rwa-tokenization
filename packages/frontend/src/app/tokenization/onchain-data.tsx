@@ -8,7 +8,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import CodeBlock from '@/components/code-block'
 import LoadingSpinner from '@/components/loading-spinner'
 import { cn } from '@/lib/utils'
-// import { Coordinates } from '@/types'
 import { firaCode } from '@/lib/fonts'
 
 type OnchainDataProps = {
