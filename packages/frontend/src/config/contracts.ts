@@ -308,6 +308,60 @@ export const realEstateABI = [
     },
     {
         "type": "function",
+        "name": "houseInfo",
+        "inputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "tokenId",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "recipientAddress",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "homeAddress",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "listPrice",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "squareFootage",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "bedRooms",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "bathRooms",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "createTime",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
         "name": "isApprovedForAll",
         "inputs": [
             {
@@ -338,6 +392,31 @@ export const realEstateABI = [
                 "name": "recipientAddress",
                 "type": "address",
                 "internalType": "address"
+            },
+            {
+                "name": "homeAddress",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "listPrice",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "squareFootage",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "bedRooms",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "bathRooms",
+                "type": "string",
+                "internalType": "string"
             }
         ],
         "outputs": [],
@@ -348,14 +427,14 @@ export const realEstateABI = [
         "name": "latestPrice",
         "inputs": [
             {
-                "name": "",
+                "name": "tokenId",
                 "type": "string",
                 "internalType": "string"
             }
         ],
         "outputs": [
             {
-                "name": "",
+                "name": "price",
                 "type": "string",
                 "internalType": "string"
             }
@@ -450,11 +529,6 @@ export const realEstateABI = [
             }
         ],
         "outputs": [
-            {
-                "name": "responseType",
-                "type": "uint8",
-                "internalType": "enum RealEstate.ResponseType"
-            },
             {
                 "name": "tokenId",
                 "type": "string",
@@ -728,44 +802,6 @@ export const realEstateABI = [
                 "type": "uint256",
                 "indexed": false,
                 "internalType": "uint256"
-            }
-        ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
-        "name": "HouseInfoReceived",
-        "inputs": [
-            {
-                "name": "requestId",
-                "type": "bytes32",
-                "indexed": true,
-                "internalType": "bytes32"
-            },
-            {
-                "name": "response",
-                "type": "string",
-                "indexed": false,
-                "internalType": "string"
-            }
-        ],
-        "anonymous": false
-    },
-    {
-        "type": "event",
-        "name": "HouseInfoRequested",
-        "inputs": [
-            {
-                "name": "requestId",
-                "type": "bytes32",
-                "indexed": true,
-                "internalType": "bytes32"
-            },
-            {
-                "name": "tokenId",
-                "type": "string",
-                "indexed": false,
-                "internalType": "string"
             }
         ],
         "anonymous": false

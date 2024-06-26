@@ -18,7 +18,8 @@ export default async function HomePage({
   return (
     <main className="container px-6 md:px-10">
       {/* md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" */}
-      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_1fr]"
+      {/* md:grid-cols-[1fr_4px_1fr]" */}
+      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" 
       >
         {!tokenId && (
           <>
@@ -101,7 +102,7 @@ export default async function HomePage({
               </div>
               <div className="ml-[-1px] grow border-t border-t-border" />
             </div>
-            {/* <div className="hidden w-[13px] flex-col md:flex">
+            <div className="hidden w-[13px] flex-col md:flex">
               <div className="mb-[-2px] grow border-l border-l-border" />
               <Image
                 src="/angle.svg"
@@ -111,17 +112,18 @@ export default async function HomePage({
                 className="shrink-0 -translate-x-px"
               />
               <div className="mt-[-2px] grow border-l border-l-border" />
-            </div> */}
+            </div>
             {/* TODO Add OnChain Data */}
-            {/* <div>
+            <div>
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/onchain.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
                   Onchain Data
                 </h3>
               </div>
-              <OnchainData tokenId={tokenId} />
-            </div> */}
+              {/* <OnchainData tokenId={tokenId} /> */}
+              <OffchainResponse tokenId={tokenId} />
+            </div>
           </>
         )}
       </div>

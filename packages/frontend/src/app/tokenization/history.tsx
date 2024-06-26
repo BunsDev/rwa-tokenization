@@ -38,9 +38,7 @@ const History = async () => {
                 {
                   tokenId,
                   listPrice,
-                  streetNumber,
-                  streetName,
-                  yearBuilt,
+                  homeAddress,
                   squareFootage,
                   txHash,
                 },
