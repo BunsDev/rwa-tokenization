@@ -32,11 +32,13 @@ async function getHouseInfo(ctx) {
     // time refactoring //
     const createTime = Number(houseInfo.createTime)
     const nowTime = Math.floor(Number(Date.now()) / 1000)
+    // const hoursPassed =  Math.floor((nowTime - createTime) / 3_600)
+    const minutesPassed =  Math.floor((nowTime - createTime) / 60)
     const daysPassed =  Math.floor((nowTime - createTime) / 86_400)
 
     // pricing info //
     const listPrice = Number(houseInfo.listPrice)
-    const latestValue = Number(listPrice) + (Number(daysPassed) * 1_000) // adds: $1000 daily to the list price.
+    const latestValue = Number(listPrice) + (Number(minutesPassed) * 10) // adds: $10 every minute to the list price.
  
     // metadata //
     const squareFootage = houseInfo.squareFootage
@@ -53,7 +55,9 @@ async function getHouseInfo(ctx) {
             "bedRooms": bedRooms,
             "bathRooms": bathRooms,
             "daysPassed": daysPassed,
-            "needsUpdate": daysPassed > 0,
+            // "hoursPassed": hoursPassed,
+            "minutesPassed": minutesPassed,
+            "needsUpdate": minutesPassed > 0,
         }
 }
 
