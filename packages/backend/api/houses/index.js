@@ -27,7 +27,9 @@ async function getHouseInfo(ctx) {
     const latestUpdate = RealEstate.methods.latestUpdate(tokenId).call()
     const nowTime = Math.floor(Number(Date.now()) / 1000)
     const hoursPassed = Math.floor((nowTime - createTime) / 3_600)
-    const hoursSinceLastRefresh = Math.floor((nowTime - latestUpdate) / 3_600)
+    const lastUpdated = latestUpdate == 0 ? createTime : latestUpdate
+ 
+    const hoursSinceLastRefresh = Math.floor((nowTime - lastUpdated) / 3_600)
     const needsUpdate = hoursSinceLastRefresh >= 1
 
     // pricing info //
@@ -45,6 +47,7 @@ async function getHouseInfo(ctx) {
             "latestValue": latestValue,
             "squareFootage": squareFootage,
             "hoursPassed": hoursPassed,
+            "hoursSinceLastRefresh": hoursSinceLastRefresh,
             "needsUpdate": needsUpdate
         }
 }
