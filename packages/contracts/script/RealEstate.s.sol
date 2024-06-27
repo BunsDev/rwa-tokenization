@@ -27,7 +27,33 @@ contract RealEstateScript is Script {
         );
 
         // silences warning.
-        realEstate;
+        realEstate.issueHouse(
+            0x6D3cF2d1D7e113a2687dF9080CC490e176F53760,
+            '759 Main Lane',
+            '1200000',
+            '6500'
+        );
+
+        realEstate.issueHouse(
+            0x6D3cF2d1D7e113a2687dF9080CC490e176F53760,
+            '5754 Princess Boulevard',
+            '360000',
+            '4500'
+        );
+
+        realEstate.issueHouse(
+            0x6D3cF2d1D7e113a2687dF9080CC490e176F53760,
+            '79560 Globe Row',
+            '225000',
+            '2250'
+        );
+
+        realEstate.issueHouse(
+            0x6D3cF2d1D7e113a2687dF9080CC490e176F53760,
+            '25 Copper Passage',
+            '460000',
+            '3260'
+        );
 
         vm.stopBroadcast();
     }

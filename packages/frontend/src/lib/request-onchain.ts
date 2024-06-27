@@ -8,7 +8,7 @@ export const getRealEstateContract = () => {
   const signer = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider)
   const contract = new ethers.Contract(
     process.env.CONTRACT_ADDRESS_REAL_ESTATE as string,
-    // '0x73EDa9bac9eDa7515Bd79D47833fA0868D74B03C',
+    // '0x1e08718fA7206f1178590aBEDCb9fd70d654Ae57',
     realEstateABI,
     signer,
   )

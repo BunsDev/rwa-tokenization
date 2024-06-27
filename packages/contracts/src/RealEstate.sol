@@ -26,6 +26,7 @@ contract RealEstate is
     using SafeERC20 for IERC20;
 
     struct APIResponse {
+        uint index;
         string tokenId;
         string response;
     }
@@ -36,8 +37,6 @@ contract RealEstate is
         string homeAddress; 
         string listPrice; 
         string squareFootage;
-        string bedRooms;
-        string bathRooms;
         uint createTime;
     }
 
@@ -89,10 +88,8 @@ contract RealEstate is
         address recipientAddress, 
         string memory homeAddress, 
         string memory listPrice,
-        string memory squareFootage,
-        string memory bedRooms,
-        string memory bathRooms
-    ) external {
+        string memory squareFootage
+    ) external onlyOwner {
         uint index = _totalHouses;
         string memory tokenId = string(abi.encode(index));
 
@@ -106,8 +103,6 @@ contract RealEstate is
             homeAddress: homeAddress,
             listPrice: listPrice,
             squareFootage: squareFootage,
-            bedRooms: bedRooms,
-            bathRooms: bathRooms,
             createTime: block.timestamp
         }));
 
@@ -115,9 +110,7 @@ contract RealEstate is
             index,
             homeAddress,
             listPrice, 
-            squareFootage,
-            bedRooms,
-            bathRooms
+            squareFootage
         );
 
         _safeMint(recipientAddress, index);
@@ -127,12 +120,13 @@ contract RealEstate is
      * @notice Request `lastPrice` for a given `tokenId`
      * @param tokenId id of said token e.g. 0
      */
-    function requestLastPrice(string calldata tokenId) external {
+    function requestLastPrice(string calldata tokenId, uint index) external {
         string[] memory args = new string[](1);
         args[0] = tokenId;
         bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
         // maps: `tokenId` associated with a given `requestId`.
         requests[requestId].tokenId = tokenId;
+        requests[requestId].index = index;
 
         latestRequestId[tokenId] = requestId;
 
@@ -145,16 +139,12 @@ contract RealEstate is
      * @param homeAddress the address of the home.
      * @param listPrice year the home was built.
      * @param squareFootage size of the home (in ft^2)
-     * @param bedRooms number of bedrooms in the home.
-     * @param bathRooms number of bathrooms in the home.
      */
     function setURI(
         uint tokenId,
         string memory homeAddress,
         string memory listPrice,
-        string memory squareFootage,
-        string memory bedRooms,
-        string memory bathRooms
+        string memory squareFootage
     ) internal {
         // [then] create URI: with property details.
         string memory uri = Base64.encode(
@@ -176,14 +166,6 @@ contract RealEstate is
                         ',{"trait_type": "squareFootage",',
                         '"value": ',
                         squareFootage,
-                        "}",
-                        ',{"trait_type": "bedRooms",',
-                        '"value": ',
-                        bedRooms,
-                        "}",
-                        ',{"trait_type": "bathRooms",',
-                        '"value": ',
-                        bathRooms,
                         "}",
                         "]}"
                     )
@@ -209,12 +191,13 @@ contract RealEstate is
     ) private {
             requests[requestId].response = string(response);
             string memory tokenId = requests[requestId].tokenId;
+            uint index = requests[requestId].index;
 
             // store: latest price for a given `requestId`.
             latestPrice[tokenId] = string(response);
 
             // updates: houseInfo[tokenId]
-            Houses storage house = houseInfo[parseInt(tokenId)];
+            Houses storage house = houseInfo[index];
             house.listPrice = string(response);
 
             emit LastPriceReceived(requestId, string(response));
@@ -266,24 +249,6 @@ contract RealEstate is
         _processResponse(requestId, response);
     }
 
-    // OWNER //
-
-    /**
-     * @notice Set the DON ID
-     * @param newDonId New DON ID
-     */
-    function setDonId(bytes32 newDonId) external onlyOwner {
-        donId = newDonId;
-    }
-
-    /**
-     * @notice Set the gas limit
-     * @param newGasLimit new gas limit
-     */
-    function setCallbackGasLimit(uint32 newGasLimit) external onlyOwner {
-        gasLimit = newGasLimit;
-    }
-
     // ERC721 SETTINGS //
 
     // gets: tokenURI for a given `tokenId`.
@@ -302,27 +267,5 @@ contract RealEstate is
 
     function totalHouses() public view returns (uint) {
         return _totalHouses;
-    }
-
-    // HELPERS //
-    
-    /*
-     * Converts an ASCII string value into an uint as long as the string 
-     * its self is a valid unsigned integer
-     * 
-     * @param _value The ASCII string to be converted to an unsigned integer
-     * @return uint The unsigned value of the ASCII string
-     */
-    function parseInt(string memory _value)
-        public
-        pure
-        returns (uint _ret) {
-        bytes memory _bytesValue = bytes(_value);
-        uint j = 1;
-        for(uint i = _bytesValue.length-1; i >= 0 && i < _bytesValue.length; i--) {
-            assert(uint8(_bytesValue[i]) >= 48 && uint8(_bytesValue[i]) <= 57);
-            _ret += (uint8(_bytesValue[i]) - 48)*j;
-            j*=10;
-        }
     }
 }

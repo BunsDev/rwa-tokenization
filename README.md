@@ -1,4 +1,4 @@
-# Real World Asset (RWA) Tokenization
+# Real World Asset (RWA) Tokenization (WIP)
 > Asset tokenization using Chainlink Functions on Avalanche.
 
 ----
@@ -20,65 +20,14 @@
 
 ## Installation
 
+### Contracts
+
 Clone the repo, navigate to the directory, and install dependencies with `make`
 ```
 git clone https://github.com/BunsDev/rwa-tokenization
-cd rwa-tokenization
+cd rwa-tokenization/contracts
 make
 ```
-
-## Simulations
-
-----
-
-# Methodology
-
-We can tokenize real world assets by combining any of the following traits:
-- **Asset**
-  - On or Off Chain Asset Represented 
-  - Nomenclature: [`AOn`, `AOff`] 
-    > Note: on-chain asset are no longer "real world".
-- **Collateral**
-  - On or Off-Chain Collateral 
-  - Nomenclature: [`COn`, `COff`] 
-- **Backing**
-  - Direct-backing or Indirect (*synthetic*)
-  - Nomenclature: [`DB`, `SB`]
-
-<br/>
-<p align="center">
-<img src="./img/tokenized-assets.svg" width="700" alt="tokenized-assets">
-</p>
-<br/>
-
----
-
-# Variants of Tokenized Real Estate (TRE)
-
-- **Simple TRE**
-  1. Ownership (of the NFT) is equivalent to owning the property.
-  2. Transferring it marks property ownership change.
-  3. NFT can hold critical data such as past sales, address, and more.
-
-- **Dynamic TRE**
-  1. Ownership (of the NFT) is equivalent to owning the property.
-  2. Transferring it marks property ownership change.
-  3. NFT can hold -- and **automatically update** -- critical data such as past sales, address, and more.
-
-- **Fractionalized TRE**
-  - Tokens represent a percentage of property ownership.
-  - Owning all fungible tokens equates to owning the property.
-
-- **TRE Cash Flows**
-  - Seperation of property ownership and rights to cash flow.
-  - Rights to cash flow represented as an NFT.
-  - Automatic redirection of cash flow to the NFT owner.
-
-- **TRE Baskets**
-  - Fungible tokens collectively representing all properties and cash flows.
-  - Automated cash can flow back to token owners.
-
----
 
 # Resources
 
