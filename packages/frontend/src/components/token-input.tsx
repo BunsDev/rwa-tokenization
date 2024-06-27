@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from './ui/input'
-import { UpdateButton } from '@/app/tokenization/update-button'
 
 export const TokenInput = () => {
   const router = useRouter()

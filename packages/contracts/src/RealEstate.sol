@@ -212,6 +212,11 @@ contract RealEstate is
 
             // store: latest price for a given `requestId`.
             latestPrice[tokenId] = string(response);
+
+            // updates: houseInfo[tokenId]
+            Houses storage house = houseInfo[parseInt(tokenId)];
+            house.listPrice = string(response);
+
             emit LastPriceReceived(requestId, string(response));
     }
 
@@ -297,5 +302,27 @@ contract RealEstate is
 
     function totalHouses() public view returns (uint) {
         return _totalHouses;
+    }
+
+    // HELPERS //
+    
+    /*
+     * Converts an ASCII string value into an uint as long as the string 
+     * its self is a valid unsigned integer
+     * 
+     * @param _value The ASCII string to be converted to an unsigned integer
+     * @return uint The unsigned value of the ASCII string
+     */
+    function parseInt(string memory _value)
+        public
+        pure
+        returns (uint _ret) {
+        bytes memory _bytesValue = bytes(_value);
+        uint j = 1;
+        for(uint i = _bytesValue.length-1; i >= 0 && i < _bytesValue.length; i--) {
+            assert(uint8(_bytesValue[i]) >= 48 && uint8(_bytesValue[i]) <= 57);
+            _ret += (uint8(_bytesValue[i]) - 48)*j;
+            j*=10;
+        }
     }
 }
