@@ -1,6 +1,6 @@
 import 'server-only'
 import { ethers } from 'ethers'
-import { realEstateABI } from '@/config/contracts'
+import { realEstateABI } from '@/config/contract'
 
 /* RWA REQUEST */
 const getRealEstateContract = () => {

@@ -8,11 +8,14 @@ export type HouseHistoryEntry = {
 }
 
 export type HouseResponse = {
-  tokenId: string
+  id: string
+  homeAddress: string
   listPrice: string
   latestValue: string
-  homeAddress: string
   squareFootage: string
+  bedRooms: string
+  bathRooms: string
+  needsUpdate: string
 }
 
 export type UserData = {

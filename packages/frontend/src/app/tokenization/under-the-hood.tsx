@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { CSSProperties, useRef, useState, ReactNode } from 'react'
 import { createElement } from 'react-syntax-highlighter'
-import { CONTRACT_CODE, TABS } from '@/config/contract-code'
+import { CONTRACT_CODE, TABS } from '@/config/contract'
 import { siteConfig } from '@/config/site'
 
 const UnderTheHood = ({ children }: { children?: ReactNode }) => {

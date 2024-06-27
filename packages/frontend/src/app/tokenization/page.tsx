@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/loading-spinner'
 // import History from './history'
 import { OffchainResponse } from './offchain-response'
 import { TokenInput } from '@/components/token-input'
+import { UpdateButton } from './update-button'
 
 export default async function Tokenization({
   searchParams,
@@ -33,7 +34,6 @@ export default async function Tokenization({
           </>
         )}
         <div>
-          {/* <ApiSwitch /> */}
           <label className="text-base font-[450] text-card-foreground">
             Token ID
           </label>
@@ -113,9 +113,7 @@ export default async function Tokenization({
           </>
         )}
       </div>
-      <UnderTheHood>
-        {/* <History /> */}
-      </UnderTheHood>
+      <UnderTheHood />
     </main>
   )
 }

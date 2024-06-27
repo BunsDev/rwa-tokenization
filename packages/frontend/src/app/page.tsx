@@ -5,7 +5,7 @@ import { OffchainResponse } from './tokenization/offchain-response'
 import LoadingSpinner from '@/components/loading-spinner'
 import { TokenInput } from '@/components/token-input'
 import { OnchainResponse } from './tokenization/onchain-response'
-// import { ApiSwitch } from '@/components/api-switch'
+import { UpdateButton } from './tokenization/update-button'
 
 export default async function HomePage({
   searchParams,
@@ -37,11 +37,11 @@ export default async function HomePage({
           </>
         )}
         <div>
-          {/* <ApiSwitch /> */}
           <label className="text-base font-[450] text-card-foreground">
             Token ID
           </label>
           <TokenInput />
+        {tokenId && <UpdateButton tokenId={tokenId} />}
         </div>
         {tokenId && (
           <>
