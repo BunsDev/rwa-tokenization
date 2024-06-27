@@ -24,12 +24,10 @@ async function getHouseInfo(ctx) {
 
     // time refactoring //
     const createTime = Number(houseInfo.createTime)
-    const latestUpdate = RealEstate.methods.latestUpdate(tokenId).call()
+    const latestUpdate = Number(RealEstate.methods.latestUpdate(tokenId).call())
     const nowTime = Math.floor(Number(Date.now()) / 1000)
     const hoursPassed = Math.floor((nowTime - createTime) / 3_600)
-    const lastUpdated = Number(latestUpdate) == 0 ? Number(createTime) : Number(latestUpdate)
- 
-    const hoursSinceLastRefresh = Math.floor((nowTime - lastUpdated) / 3_600)
+    const hoursSinceLastRefresh = Math.floor((nowTime - latestUpdate) / 3_600)
     const needsUpdate = hoursSinceLastRefresh >= 1
 
     // pricing info //
