@@ -37,8 +37,6 @@ contract RealEstate is
         string homeAddress; 
         string listPrice; 
         string squareFootage;
-        string bedRooms;
-        string bathRooms;
         uint createTime;
     }
 
@@ -90,10 +88,8 @@ contract RealEstate is
         address recipientAddress, 
         string memory homeAddress, 
         string memory listPrice,
-        string memory squareFootage,
-        string memory bedRooms,
-        string memory bathRooms
-    ) external {
+        string memory squareFootage
+    ) external onlyOwner {
         uint index = _totalHouses;
         string memory tokenId = string(abi.encode(index));
 
@@ -107,8 +103,6 @@ contract RealEstate is
             homeAddress: homeAddress,
             listPrice: listPrice,
             squareFootage: squareFootage,
-            bedRooms: bedRooms,
-            bathRooms: bathRooms,
             createTime: block.timestamp
         }));
 
@@ -116,9 +110,7 @@ contract RealEstate is
             index,
             homeAddress,
             listPrice, 
-            squareFootage,
-            bedRooms,
-            bathRooms
+            squareFootage
         );
 
         _safeMint(recipientAddress, index);
@@ -134,7 +126,7 @@ contract RealEstate is
         bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
         // maps: `tokenId` associated with a given `requestId`.
         requests[requestId].tokenId = tokenId;
-        requests[requestId].index = index
+        requests[requestId].index = index;
 
         latestRequestId[tokenId] = requestId;
 
@@ -147,16 +139,12 @@ contract RealEstate is
      * @param homeAddress the address of the home.
      * @param listPrice year the home was built.
      * @param squareFootage size of the home (in ft^2)
-     * @param bedRooms number of bedrooms in the home.
-     * @param bathRooms number of bathrooms in the home.
      */
     function setURI(
         uint tokenId,
         string memory homeAddress,
         string memory listPrice,
-        string memory squareFootage,
-        string memory bedRooms,
-        string memory bathRooms
+        string memory squareFootage
     ) internal {
         // [then] create URI: with property details.
         string memory uri = Base64.encode(
@@ -178,14 +166,6 @@ contract RealEstate is
                         ',{"trait_type": "squareFootage",',
                         '"value": ',
                         squareFootage,
-                        "}",
-                        ',{"trait_type": "bedRooms",',
-                        '"value": ',
-                        bedRooms,
-                        "}",
-                        ',{"trait_type": "bathRooms",',
-                        '"value": ',
-                        bathRooms,
                         "}",
                         "]}"
                     )
@@ -267,24 +247,6 @@ contract RealEstate is
             return;
         }
         _processResponse(requestId, response);
-    }
-
-    // OWNER //
-
-    /**
-     * @notice Set the DON ID
-     * @param newDonId New DON ID
-     */
-    function setDonId(bytes32 newDonId) external onlyOwner {
-        donId = newDonId;
-    }
-
-    /**
-     * @notice Set the gas limit
-     * @param newGasLimit new gas limit
-     */
-    function setCallbackGasLimit(uint32 newGasLimit) external onlyOwner {
-        gasLimit = newGasLimit;
     }
 
     // ERC721 SETTINGS //
