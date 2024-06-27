@@ -28,7 +28,7 @@ async function getHouseInfo(ctx) {
     const nowTime = Math.floor(Number(Date.now()) / 1000)
     const hoursPassed = Math.floor((nowTime - createTime) / 3_600)
     const hoursSinceLastRefresh = Math.floor((nowTime - latestUpdate) / 3_600)
-    const needsUpdate = hoursSinceLastRefresh > 1
+    const needsUpdate = hoursSinceLastRefresh >= 1
 
     // pricing info //
     const listPrice = Number(houseInfo.listPrice)
