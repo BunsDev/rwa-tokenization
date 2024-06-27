@@ -5,9 +5,7 @@ const infoResponse = await Functions.makeHttpRequest({
 if (infoResponse.error) {
     throw Error('Housing Info Request Error');
 }
-const streetNumber = infoResponse.data.streetNumber;
-const streetName = infoResponse.data.streetName;
-const homeAddress = `${streetNumber} ${streetName}`;
+const homeAddress = infoResponse.data.homeAddress;
 const yearBuilt = infoResponse.data.yearBuilt;
 
-return Functions.encodeString([streetNumber, streetName, yearBuilt]);;
+return Functions.encodeString([homeAddress, yearBuilt]);;

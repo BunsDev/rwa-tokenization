@@ -2,11 +2,11 @@ import UnderTheHood from './tokenization/under-the-hood'
 import Image from 'next/image'
 import { Suspense } from 'react'
 import { OffchainResponse } from './tokenization/offchain-response'
-import { OnchainData } from './tokenization/onchain-data'
 import LoadingSpinner from '@/components/loading-spinner'
-import History from './tokenization/history'
 import { TokenInput } from '@/components/token-input'
-// import { ApiSwitch } from '@/components/api-switch'
+import { OnchainResponse } from './tokenization/onchain-response'
+import { UpdateButton } from '../components/update-button'
+import { fetchHouse, fetchOnChainHouse, getCurrentPrice, getListPrice } from '@/lib/fetch-house'
 
 export default async function HomePage({
   searchParams,
@@ -15,10 +15,20 @@ export default async function HomePage({
 }) {
   const tokenId = searchParams['tokenId'] as string
 
+  const offchainData = await fetchHouse(tokenId)
+  const chainData = await fetchOnChainHouse(tokenId)
+
+  const listPrice = getListPrice(chainData)
+  const currentPrice = getCurrentPrice(offchainData)
+  const needsUpdate = listPrice != currentPrice
+
   return (
     <main className="container px-6 md:px-10">
-      {/* md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" */}
-      <div className="grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_1fr]"
+      <div className={
+        !tokenId 
+          ? "grid gap-0 border-b border-b-border py-10 md:grid-cols-[2fr_4px_minmax(0,_1fr)_4px_0fr]" 
+          : "grid gap-10 border-b border-b-border py-10 md:grid-cols-[1fr_4px_minmax(0,_1fr)_4px_1fr]" 
+      }
       >
         {!tokenId && (
           <>
@@ -35,11 +45,11 @@ export default async function HomePage({
           </>
         )}
         <div>
-          {/* <ApiSwitch /> */}
           <label className="text-base font-[450] text-card-foreground">
             Token ID
           </label>
           <TokenInput />
+        {tokenId && needsUpdate && <UpdateButton tokenId={tokenId} />}
         </div>
         {tokenId && (
           <>
@@ -71,7 +81,7 @@ export default async function HomePage({
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/code.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
-                  Simulated Functions Response
+                  Offchain Data
                 </h3>
               </div>
               <Suspense
@@ -80,7 +90,7 @@ export default async function HomePage({
                   <div className="flex h-[252px] flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
                     <LoadingSpinner />
                     <span className="text-sm font-[450] text-card-foreground">
-                      Data currently loading...
+                      Data loading...
                     </span>
                   </div>
                 }
@@ -101,7 +111,7 @@ export default async function HomePage({
               </div>
               <div className="ml-[-1px] grow border-t border-t-border" />
             </div>
-            {/* <div className="hidden w-[13px] flex-col md:flex">
+            <div className="hidden w-[13px] flex-col md:flex">
               <div className="mb-[-2px] grow border-l border-l-border" />
               <Image
                 src="/angle.svg"
@@ -111,23 +121,21 @@ export default async function HomePage({
                 className="shrink-0 -translate-x-px"
               />
               <div className="mt-[-2px] grow border-l border-l-border" />
-            </div> */}
-            {/* TODO Add OnChain Data */}
-            {/* <div>
+            </div>
+            <div>
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/onchain.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
                   Onchain Data
                 </h3>
               </div>
-              <OnchainData tokenId={tokenId} />
-            </div> */}
+              <OnchainResponse tokenId={tokenId} />
+            </div>
           </>
         )}
       </div>
-      <UnderTheHood>
-        <History />
-      </UnderTheHood>
+      <UnderTheHood />
+      {/* @todo */}
       {/* <footer className="container px-6 py-10 md:px-10">
         <h2 className="text-2xl font-medium">How It Works</h2>
         <Image

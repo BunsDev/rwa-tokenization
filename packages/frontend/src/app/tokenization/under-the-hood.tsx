@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { CSSProperties, useRef, useState, ReactNode } from 'react'
 import { createElement } from 'react-syntax-highlighter'
-import { CONTRACT_CODE, TABS } from '@/config/contract-code-tokenization'
+import { CONTRACT_CODE, TABS } from '@/config/contract'
 import { siteConfig } from '@/config/site'
 
 const UnderTheHood = ({ children }: { children?: ReactNode }) => {
@@ -39,9 +39,10 @@ const UnderTheHood = ({ children }: { children?: ReactNode }) => {
               }}
             >
               <label className="text-xl font-medium">{label}</label>
-              <p className="text-sm font-[450] text-[#858A95]">
-                <div dangerouslySetInnerHTML={{ __html: content }}></div>
-              </p>
+                <div dangerouslySetInnerHTML={{ __html: content }}>
+              {/* <p className="text-sm font-[450] text-[#858A95]">
+              </p> */}
+                </div>
             </Button>
           ) : (
             <Button

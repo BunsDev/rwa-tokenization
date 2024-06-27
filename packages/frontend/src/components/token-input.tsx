@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from './ui/input'
 
@@ -12,9 +11,10 @@ export const TokenInput = () => {
   const searchParams = useSearchParams()
 
   const [inputValue, setInputValue] = useState('')
-
+  
   useEffect(() => {
     const tokenId = searchParams.get('tokenId')
+
     if (tokenId) {
       setInputValue(tokenId)
     }
@@ -41,10 +41,10 @@ export const TokenInput = () => {
       <Button
         disabled={!inputValue}
         onClick={() => submit()}
-        className="h-[46px] w-full bg-[#375BD2] py-3 text-xl font-medium leading-[26px] hover:bg-[#375BD2]/90"
+        className="h-[46px] w-full bg-[#375BD2] py-3 text-xl font-medium leading-[26px] hover:bg-[#375BD2]/90 mb-2"
       >
-        Run
-        <Image src="/arrow-right.svg" width={36} height={36} alt="arrow" />
+        Search Data
+        {/* <Image src="/arrow-right.svg" width={36} height={36} alt="arrow" /> */}
       </Button>
     </>
   )

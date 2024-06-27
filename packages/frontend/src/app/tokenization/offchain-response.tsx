@@ -2,7 +2,8 @@ import CodeBlock from '@/components/code-block'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   fetchHouse,
-  getCurrentPrice
+  getCurrentPrice,
+  getListPrice
 } from '@/lib/fetch-house'
 import { firaCode } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
@@ -16,9 +17,10 @@ export const OffchainResponse = async ({
 }: OffchainResponseProps) => {
   const houseData = await fetchHouse(tokenId)
 
+  // const rawData = houseData
   const rawData = JSON.stringify(houseData, null, 3)
-  const listPrice = getCurrentPrice(houseData)
-  const parsedData = `${listPrice}`
+  const latestPrice = getCurrentPrice(houseData)
+  const parsedData = `${latestPrice}`
 
   return (
     <>
@@ -30,22 +32,12 @@ export const OffchainResponse = async ({
       >
         <CodeBlock codeString={rawData} />
       </ScrollArea>
-      <div className="flex justify-between space-x-4">
-        <div className="flex flex-col justify-end">
-          <label className="mb-2 text-base font-[450] text-card-foreground">
-           Chainlink Function Output
-          </label>
-          <div className="rounded bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground">
-            {parsedData}
-          </div>
-        </div>
-        <div className="flex flex-col justify-end lg:grow">
-          <label className="mb-2 text-base font-[450] text-card-foreground">
-            Unit
-          </label>
-          <div className="rounded bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground">
-            {`$`}
-          </div>
+      <div className="grid grid-cols-2 justify-center">
+        <label className="flex justify-center py-2 text-base font-[450] text-card-foreground">
+          Current Price
+        </label>
+        <div className="flex rounded bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground justify-center">
+          {Number(parsedData).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}
         </div>
       </div>
     </>

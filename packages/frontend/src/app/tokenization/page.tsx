@@ -1,13 +1,9 @@
 import UnderTheHood from './under-the-hood'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { CityInput } from '@/components/city-input'
 import LoadingSpinner from '@/components/loading-spinner'
-import { Coordinates } from '@/types'
-import History from './history'
+// import History from './history'
 import { OffchainResponse } from './offchain-response'
-// import { OnchainData } from './onchain-data'
-// import { ApiSwitch } from '@/components/api-switch'
 import { TokenInput } from '@/components/token-input'
 
 export default async function Tokenization({
@@ -37,7 +33,6 @@ export default async function Tokenization({
           </>
         )}
         <div>
-          {/* <ApiSwitch /> */}
           <label className="text-base font-[450] text-card-foreground">
             Token ID
           </label>
@@ -73,7 +68,7 @@ export default async function Tokenization({
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/code.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
-                  Simulated Functions Response
+                  Offchain Data
                 </h3>
               </div>
               <Suspense
@@ -114,24 +109,10 @@ export default async function Tokenization({
               />
               <div className="mt-[-2px] grow border-l border-l-border" />
             </div>
-            {/* <div>
-              <div className="mb-7 flex items-center space-x-2">
-                <Image src="/onchain.svg" width={20} height={20} alt="globe" />
-                <h3 className="text-2xl font-medium tracking-[-0.24px]">
-                  Onchain Data
-                </h3>
-              </div>
-              <OnchainData
-                key={`onchain-${tokenId}`}
-                tokenId={tokenId}
-              />
-            </div> */}
           </>
         )}
       </div>
-      <UnderTheHood>
-        <History />
-      </UnderTheHood>
+      <UnderTheHood />
     </main>
   )
 }
