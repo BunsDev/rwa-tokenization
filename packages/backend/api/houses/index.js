@@ -7,14 +7,6 @@ const web3 = web3Factory(CHAIN_ID);
 // CONTRACTS //
 const RealEstate = new web3.eth.Contract(REAL_ESTATE_ABI, REAL_ESTATE_ADDRESS)
 
-// generates: random integer.
-function getRandomInt(max, min) {
-    const randInt 
-        = Math.floor(Math.random() * max) < min ? min.toString()
-            : (Math.floor(Math.random() * max)).toString()
-    return Number(randInt).toString()
-}
-
 async function getInfo() {
     const totalHouses = new BN(await RealEstate.methods.totalHouses().call())
     // const totalHouses = new BN(_totalHouses.toString())
@@ -69,4 +61,4 @@ async function houseInfo(ctx) {
     ctx.body = (await getHouseInfo(ctx))
 }
 
-module.exports = { infos, issuedInfo, houseInfo };
+module.exports = { infos, houseInfo };
