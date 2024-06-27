@@ -13,26 +13,35 @@ export const getRealEstateContract = () => {
   )
   return contract
 }
+
 export const getHouseOnChain = async (requestId: string) => {
   const contract = getRealEstateContract()
   const result = await contract.requests(requestId)
+  // console.log(result)
+  
 
-  if (!result.tokenId) return
+  if (!result.index || !result.tokenId || !result.response) return
 
   return {
+    index: result.index.toString(),
     tokenId: result.tokenId,
     response: result.response.toString()
   }
 }
 
-export const requestHouseOnChain = async (tokenId: any, index: any) => {
+export const requestHouseOnChain = async (tokenId: any) => {
   const contract = getRealEstateContract()
   const tx = await contract.requestLastPrice(
     tokenId,
-    index
+    tokenId
   )
   const receipt = await tx.wait()
   console.log(receipt)
+  
   const requestId = receipt?.logs[2].args[0] as string
-  return { tx, requestId }
+  console.log(requestId)
+  return { 
+    tx: tx, 
+    requestId: requestId 
+  }
 }
