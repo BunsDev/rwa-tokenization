@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS_REAL_ESTATE = '0x1e08718fA7206f1178590aBEDCb9fd70d654Ae57'
+export const CONTRACT_ADDRESS_REAL_ESTATE = '0x364AE2e687B31e75088E8a7bDd232a4eD6C85ee6'
 
 // Warning: Do not copy/paste this code.
 // Please refer to the supplied example code in the repository instead.
@@ -68,6 +68,7 @@ contract RealEstate is
     mapping(bytes32 => APIResponse) public requests;
     mapping(string => bytes32) public latestRequestId;
     mapping(string tokenId => string price) public latestPrice;
+    mapping(string tokenId => uint lastUpdate) public lastestUpdate;
 
     Houses[] public houseInfo;
 
@@ -199,8 +200,11 @@ contract RealEstate is
             string memory tokenId = requests[requestId].tokenId;
             uint index = requests[requestId].index;
 
-            // store: latest price for a given \`requestId\`.
+            // store: latest price for a given \`tokenId\`.
             latestPrice[tokenId] = string(response);
+            
+            // store: last update time for a given \`tokenId\`.
+            lastestUpdate[tokenId] = block.timestamp;
 
             // updates: houseInfo[tokenId]
             Houses storage house = houseInfo[index];
