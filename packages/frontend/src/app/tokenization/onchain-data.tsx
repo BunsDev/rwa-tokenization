@@ -66,19 +66,21 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
     )
   }
 
-  if (!onchainData) {
-    return (
-      <div className="flex h-[252px] flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
-        <LoadingSpinner />
-        <span className="text-sm font-[450] text-card-foreground">
-          Data currently loading...
-        </span>
-      </div>
-    )
-  }
+  // if (!onchainData) {
+  //   return (
+  //     <div className="flex h-[252px] flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
+  //       <LoadingSpinner />
+  //       <span className="text-sm font-[450] text-card-foreground">
+  //         Data currently loading...
+  //       </span>
+  //     </div>
+  //   )
+  // }
 
   return (
-    <>
+    <div
+      className={`bg-[#181D29]`}
+    >
       <label className="text-base font-[450] text-card-foreground">
         What is in the smart contract
       </label>
@@ -103,6 +105,6 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
           <Image src="/external.svg" width={16} height={16} alt="external" />
         </Link>
       </div>
-    </>
+    </div>
   )
 }

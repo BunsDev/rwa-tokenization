@@ -1,9 +1,9 @@
-// Warning: Do not copy/paste this code
-// Please refer to the supplied example code in the
-// repository instead.
-// The code here has been slightly changed to escape
-// special characters in order to be displayed on the
-// web-page.
+export const CONTRACT_ADDRESS_REAL_ESTATE = '0x1e08718fA7206f1178590aBEDCb9fd70d654Ae57'
+
+// Warning: Do not copy/paste this code.
+// Please refer to the supplied example code in the repository instead.
+// The code here has been slightly changed to escape special characters in order to be displayed on the web-page.
+
 export const CONTRACT_CODE = `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 import { FunctionsClient } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
@@ -32,6 +32,7 @@ contract RealEstate is
     using SafeERC20 for IERC20;
 
     struct APIResponse {
+        uint index;
         string tokenId;
         string response;
     }
@@ -42,8 +43,6 @@ contract RealEstate is
         string homeAddress; 
         string listPrice; 
         string squareFootage;
-        string bedRooms;
-        string bathRooms;
         uint createTime;
     }
 
@@ -89,16 +88,14 @@ contract RealEstate is
     }
 
     /**
-     * @notice Request \`houseInfo\` for a given \`tokenId\`
+     * @notice Issues new tokenized real estate NFT asset.
      */
     function issueHouse(
         address recipientAddress, 
         string memory homeAddress, 
         string memory listPrice,
-        string memory squareFootage,
-        string memory bedRooms,
-        string memory bathRooms
-    ) external {
+        string memory squareFootage
+    ) external onlyOwner {
         uint index = _totalHouses;
         string memory tokenId = string(abi.encode(index));
 
@@ -112,8 +109,6 @@ contract RealEstate is
             homeAddress: homeAddress,
             listPrice: listPrice,
             squareFootage: squareFootage,
-            bedRooms: bedRooms,
-            bathRooms: bathRooms,
             createTime: block.timestamp
         }));
 
@@ -121,9 +116,7 @@ contract RealEstate is
             index,
             homeAddress,
             listPrice, 
-            squareFootage,
-            bedRooms,
-            bathRooms
+            squareFootage
         );
 
         _safeMint(recipientAddress, index);
@@ -133,12 +126,13 @@ contract RealEstate is
      * @notice Request \`lastPrice\` for a given \`tokenId\`
      * @param tokenId id of said token e.g. 0
      */
-    function requestLastPrice(string calldata tokenId) external {
+    function requestLastPrice(string calldata tokenId, uint index) external {
         string[] memory args = new string[](1);
         args[0] = tokenId;
         bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
         // maps: \`tokenId\` associated with a given \`requestId\`.
         requests[requestId].tokenId = tokenId;
+        requests[requestId].index = index;
 
         latestRequestId[tokenId] = requestId;
 
@@ -151,16 +145,12 @@ contract RealEstate is
      * @param homeAddress the address of the home.
      * @param listPrice year the home was built.
      * @param squareFootage size of the home (in ft^2)
-     * @param bedRooms number of bedrooms in the home.
-     * @param bathRooms number of bathrooms in the home.
      */
     function setURI(
         uint tokenId,
         string memory homeAddress,
         string memory listPrice,
-        string memory squareFootage,
-        string memory bedRooms,
-        string memory bathRooms
+        string memory squareFootage
     ) internal {
         // [then] create URI: with property details.
         string memory uri = Base64.encode(
@@ -182,14 +172,6 @@ contract RealEstate is
                         ',{"trait_type": "squareFootage",',
                         '"value": ',
                         squareFootage,
-                        "}",
-                        ',{"trait_type": "bedRooms",',
-                        '"value": ',
-                        bedRooms,
-                        "}",
-                        ',{"trait_type": "bathRooms",',
-                        '"value": ',
-                        bathRooms,
                         "}",
                         "]}"
                     )
@@ -215,9 +197,15 @@ contract RealEstate is
     ) private {
             requests[requestId].response = string(response);
             string memory tokenId = requests[requestId].tokenId;
+            uint index = requests[requestId].index;
 
             // store: latest price for a given \`requestId\`.
             latestPrice[tokenId] = string(response);
+
+            // updates: houseInfo[tokenId]
+            Houses storage house = houseInfo[index];
+            house.listPrice = string(response);
+
             emit LastPriceReceived(requestId, string(response));
     }
 
@@ -267,24 +255,6 @@ contract RealEstate is
         _processResponse(requestId, response);
     }
 
-    // OWNER //
-
-    /**
-     * @notice Set the DON ID
-     * @param newDonId New DON ID
-     */
-    function setDonId(bytes32 newDonId) external onlyOwner {
-        donId = newDonId;
-    }
-
-    /**
-     * @notice Set the gas limit
-     * @param newGasLimit new gas limit
-     */
-    function setCallbackGasLimit(uint32 newGasLimit) external onlyOwner {
-        gasLimit = newGasLimit;
-    }
-
     // ERC721 SETTINGS //
 
     // gets: tokenURI for a given \`tokenId\`.
@@ -304,48 +274,46 @@ contract RealEstate is
     function totalHouses() public view returns (uint) {
         return _totalHouses;
     }
-}
-`
+}`
 
 export const TABS = [
-  {
-    label: 'Contracts Imports',
-    content:
-      'This is where we tell our smart contract that we want to use Chainlink Functions.',
-    highlightedLines: Array.from({ length: 11 }, (v, k) => 3 + k),
-  },
-  {
-    label: 'JavaScript Source',
-    content:
-      'This is where the JavaScript code that Chainlink Functions will execute is stored. By storing it on-chain, we have guarantees that this and only this code will be executed.',
-    highlightedLines: Array.from({ length: 11 }, (v, k) => 44 + k),
-  },
-  {
-    label: 'Subscription ID',
-    content:
-      'This is where the Chainlink Functions <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscription ID</a> is stored. This is required for your smart contract to use Chainlink Functions.',
-    highlightedLines: [57],
-  },
-  {
-    label: 'Functions Initialization',
-    content:
-      'In this contract\'s constructor, we set some Chainlink Functions specific configuration values such as the <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/supported-networks">DON ID</a>, Functions <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscription ID</a> and gas limit for the callback transaction.',
-    highlightedLines: Array.from({ length: 10 }, (v, k) => 74 + k),
-  },
-  {
-    label: 'Functions Request',
-    content:
-      'This is the function called by the UI when a new request is initiated. It sends the request to the Chainlink Functions DoN, along with all associated parameters, such as the JavaScript code to execute, subscription ID, gas limit for the callback transaction, and DoN ID of the Chainlink Functions network we wish to execute the code on.',
-    highlightedLines: Array.from({ length: 15 }, (v, k) => 126 + k),
-  },
-  {
-    label: 'Functions Response',
-    content:
-      'This is the function called by the Chainlink Functions DoN when it receives a response from the JavaScript code executed off-chain in the Chainlink Function.',
-    highlightedLines: Array.from({ length: 16 }, (v, k) => 201 + k),
-  },
+    {
+        label: 'Contracts Imports',
+        content:
+            'Where we tell our smart contract we want to use Chainlink Functions.',
+        highlightedLines: Array.from({ length: 2 }, (v, k) => 3 + k),
+    },
+    {
+        label: 'JavaScript Source',
+        content:
+            'JavaScript Chainlink Functions will execute. Storing on-chain guarantees only this code will be executed.',
+        highlightedLines: Array.from({ length: 10 }, (v, k) => 44 + k),
+    },
+    {
+        label: 'Subscription ID',
+        content:
+            'Chainlink Functions <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscription ID</a> is required for your smart contract to use Chainlink Functions.',
+        highlightedLines: [56],
+    },
+    {
+        label: 'Functions Initialization',
+        content:
+            'We set some Functions-specific configuration values in the contructor, such as the <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/supported-networks">donId</a>, <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscriptionId</a>, and gasLimit for the callback transaction.',
+        highlightedLines: Array.from({ length: 10 }, (v, k) => 73 + k),
+    },
+    {
+        label: 'Functions Request',
+        content:
+            'This is called by the UI when a new request is initiated. It sends the request to the Chainlink Functions DoN, along with the tokenId and index of the tokenized asset that requires a price update.',
+        highlightedLines: Array.from({ length: 12 }, (v, k) => 123 + k),
+    },
+    {
+        label: 'Functions Response',
+        content:
+            'This is the function called by the Chainlink Functions DoN when it receives a response from the JavaScript code executed off-chain in the Chainlink Function.',
+        highlightedLines: Array.from({ length: 17 }, (v, k) => 188 + k),
+    },
 ]
-
 
 export const realEstateABI = [
     {
@@ -523,16 +491,6 @@ export const realEstateABI = [
                 "internalType": "string"
             },
             {
-                "name": "bedRooms",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
-                "name": "bathRooms",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
                 "name": "createTime",
                 "type": "uint256",
                 "internalType": "uint256"
@@ -585,16 +543,6 @@ export const realEstateABI = [
             },
             {
                 "name": "squareFootage",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
-                "name": "bedRooms",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
-                "name": "bathRooms",
                 "type": "string",
                 "internalType": "string"
             }
@@ -687,31 +635,17 @@ export const realEstateABI = [
     },
     {
         "type": "function",
-        "name": "parseInt",
-        "inputs": [
-            {
-                "name": "_value",
-                "type": "string",
-                "internalType": "string"
-            }
-        ],
-        "outputs": [
-            {
-                "name": "_ret",
-                "type": "uint256",
-                "internalType": "uint256"
-            }
-        ],
-        "stateMutability": "pure"
-    },
-    {
-        "type": "function",
         "name": "requestLastPrice",
         "inputs": [
             {
                 "name": "tokenId",
                 "type": "string",
                 "internalType": "string"
+            },
+            {
+                "name": "index",
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
         "outputs": [],
@@ -728,6 +662,11 @@ export const realEstateABI = [
             }
         ],
         "outputs": [
+            {
+                "name": "index",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
             {
                 "name": "tokenId",
                 "type": "string",
@@ -805,32 +744,6 @@ export const realEstateABI = [
                 "name": "approved",
                 "type": "bool",
                 "internalType": "bool"
-            }
-        ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
-    },
-    {
-        "type": "function",
-        "name": "setCallbackGasLimit",
-        "inputs": [
-            {
-                "name": "newGasLimit",
-                "type": "uint32",
-                "internalType": "uint32"
-            }
-        ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
-    },
-    {
-        "type": "function",
-        "name": "setDonId",
-        "inputs": [
-            {
-                "name": "newDonId",
-                "type": "bytes32",
-                "internalType": "bytes32"
             }
         ],
         "outputs": [],

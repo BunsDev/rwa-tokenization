@@ -33,7 +33,7 @@ export default async function Tokenization({
           </>
         )}
         <div>
-          <label className="text-base font-[450] text-card-foreground">
+          <label className="text-base font-[550] text-card-foreground">
             Token ID
           </label>
           <TokenInput />

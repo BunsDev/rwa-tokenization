@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
   const { tokenId } = params
 
-  const { tx, requestId } = await requestHouseOnChain(tokenId)
+  const { tx, requestId } = await requestHouseOnChain(tokenId, tokenId)
 
   if (!tx) return NextResponse.error()
 

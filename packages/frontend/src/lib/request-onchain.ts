@@ -1,14 +1,13 @@
 import 'server-only'
 import { ethers } from 'ethers'
-import { realEstateABI } from '@/config/contract'
+import { CONTRACT_ADDRESS_REAL_ESTATE, realEstateABI } from '@/config/contract'
 
 /* RWA REQUEST */
 export const getRealEstateContract = () => {
   const provider = new ethers.JsonRpcProvider(process.env.NETWORK_RPC_URL)
   const signer = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider)
   const contract = new ethers.Contract(
-    process.env.CONTRACT_ADDRESS_REAL_ESTATE as string,
-    // '0x1e08718fA7206f1178590aBEDCb9fd70d654Ae57',
+    CONTRACT_ADDRESS_REAL_ESTATE,
     realEstateABI,
     signer,
   )
@@ -26,10 +25,11 @@ export const getHouseOnChain = async (requestId: string) => {
   }
 }
 
-export const requestHouseOnChain = async (tokenId: any) => {
+export const requestHouseOnChain = async (tokenId: any, index: any) => {
   const contract = getRealEstateContract()
   const tx = await contract.requestLastPrice(
-    tokenId
+    tokenId,
+    index
   )
   const receipt = await tx.wait()
   console.log(receipt)
