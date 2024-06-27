@@ -6,7 +6,7 @@ const API_URL = `https://api.chateau.voyage/house`
 
 const fetchRealEstateData = cache(
   async <T>(
-    tokenId: string, // URLSearchParams,
+    tokenId: string = '0', // URLSearchParams,
     revalidate = 60,
   ): Promise<T> => {
     const response = await fetch(
