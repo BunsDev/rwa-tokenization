@@ -174,16 +174,6 @@
                 "internalType": "string"
             },
             {
-                "name": "bedRooms",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
-                "name": "bathRooms",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
                 "name": "createTime",
                 "type": "uint256",
                 "internalType": "uint256"
@@ -236,16 +226,6 @@
             },
             {
                 "name": "squareFootage",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
-                "name": "bedRooms",
-                "type": "string",
-                "internalType": "string"
-            },
-            {
-                "name": "bathRooms",
                 "type": "string",
                 "internalType": "string"
             }
@@ -344,6 +324,11 @@
                 "name": "tokenId",
                 "type": "string",
                 "internalType": "string"
+            },
+            {
+                "name": "index",
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
         "outputs": [],
@@ -360,6 +345,11 @@
             }
         ],
         "outputs": [
+            {
+                "name": "index",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
             {
                 "name": "tokenId",
                 "type": "string",
@@ -437,32 +427,6 @@
                 "name": "approved",
                 "type": "bool",
                 "internalType": "bool"
-            }
-        ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
-    },
-    {
-        "type": "function",
-        "name": "setCallbackGasLimit",
-        "inputs": [
-            {
-                "name": "newGasLimit",
-                "type": "uint32",
-                "internalType": "uint32"
-            }
-        ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
-    },
-    {
-        "type": "function",
-        "name": "setDonId",
-        "inputs": [
-            {
-                "name": "newDonId",
-                "type": "bytes32",
-                "internalType": "bytes32"
             }
         ],
         "outputs": [],

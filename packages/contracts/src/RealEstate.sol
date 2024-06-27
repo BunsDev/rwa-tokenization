@@ -82,7 +82,7 @@ contract RealEstate is
     }
 
     /**
-     * @notice Request `houseInfo` for a given `tokenId`
+     * @notice Issues new tokenized real estate NFT asset.
      */
     function issueHouse(
         address recipientAddress, 
