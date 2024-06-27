@@ -5,7 +5,8 @@ import { OffchainResponse } from './tokenization/offchain-response'
 import LoadingSpinner from '@/components/loading-spinner'
 import { TokenInput } from '@/components/token-input'
 import { OnchainResponse } from './tokenization/onchain-response'
-import { UpdateButton } from './tokenization/update-button'
+import { UpdateButton } from '../components/update-button'
+import { fetchHouse, fetchOnChainHouse, getCurrentPrice, getListPrice } from '@/lib/fetch-house'
 
 export default async function HomePage({
   searchParams,
@@ -13,6 +14,13 @@ export default async function HomePage({
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
   const tokenId = searchParams['tokenId'] as string
+
+  const offchainData = await fetchHouse(tokenId)
+  const chainData = await fetchOnChainHouse(tokenId)
+
+  const listPrice = getListPrice(chainData)
+  const currentPrice = getCurrentPrice(offchainData)
+  const needsUpdate = listPrice != currentPrice
 
   return (
     <main className="container px-6 md:px-10">
@@ -41,7 +49,7 @@ export default async function HomePage({
             Token ID
           </label>
           <TokenInput />
-        {tokenId && <UpdateButton tokenId={tokenId} />}
+        {tokenId && needsUpdate && <UpdateButton tokenId={tokenId} />}
         </div>
         {tokenId && (
           <>
@@ -73,7 +81,7 @@ export default async function HomePage({
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/code.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
-                  Simulated Response
+                  Offchain Data
                 </h3>
               </div>
               <Suspense

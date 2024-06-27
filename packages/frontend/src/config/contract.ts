@@ -687,6 +687,25 @@ export const realEstateABI = [
     },
     {
         "type": "function",
+        "name": "parseInt",
+        "inputs": [
+            {
+                "name": "_value",
+                "type": "string",
+                "internalType": "string"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_ret",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
         "name": "requestLastPrice",
         "inputs": [
             {

@@ -14,9 +14,7 @@ type OnchainDataProps = {
   tokenId: string
 }
 
-export const OnchainData = ({
-  tokenId
-}: OnchainDataProps) => {
+export const OnchainData = ({ tokenId }: OnchainDataProps) => {
   const [txHash, setTxHash] = useState()
   const [requestId, setRequestId] = useState()
   const [onchainData, setOnchainData] = useState()
@@ -26,29 +24,28 @@ export const OnchainData = ({
     const requestOnChainPrice = async () => {
       const response = await fetch('/api/onchain-price', {
         method: 'POST',
-        body: JSON.stringify(tokenId),
+        body: JSON.stringify({ tokenId: tokenId }),
       })
       const result = await response.json()
       if (result.error) {
         setError(result.error)
         return
       }
-      setTxHash(result.data.txHash)
-      setRequestId(result.data.requestId)
+      setTxHash(result.txHash)
+      setRequestId(result.requestId)
     }
     requestOnChainPrice()
   }, [tokenId])
 
   useEffect(() => {
     if (!requestId) return
+
     const interval = setInterval(async () => {
-      const response = await fetch(
-        `/api/onchain-price?requestId=${requestId}`,
-      )
+      const response = await fetch(`/api/onchain-price?requestId=${requestId}`)
       const result = await response.json()
-      if (result.data) {
+      if (result.text) {
         clearInterval(interval)
-        setOnchainData(result.data)
+        setOnchainData(result.text)
       }
     }, 1000)
   }, [requestId])

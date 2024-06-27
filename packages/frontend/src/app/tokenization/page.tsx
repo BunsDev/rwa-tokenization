@@ -5,7 +5,6 @@ import LoadingSpinner from '@/components/loading-spinner'
 // import History from './history'
 import { OffchainResponse } from './offchain-response'
 import { TokenInput } from '@/components/token-input'
-import { UpdateButton } from './update-button'
 
 export default async function Tokenization({
   searchParams,
@@ -69,7 +68,7 @@ export default async function Tokenization({
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/code.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
-                  Simulated Response
+                  Offchain Data
                 </h3>
               </div>
               <Suspense
