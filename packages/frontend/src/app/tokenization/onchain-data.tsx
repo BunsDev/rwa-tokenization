@@ -32,6 +32,7 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
         return
       }
       setTxHash(result.txHash)
+      // console.log(result.txHash)
       setRequestId(result.requestId)
     }
     requestOnChainPrice()
@@ -66,16 +67,16 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
     )
   }
 
-  // if (!onchainData) {
-  //   return (
-  //     <div className="flex h-[252px] flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
-  //       <LoadingSpinner />
-  //       <span className="text-sm font-[450] text-card-foreground">
-  //         Data currently loading...
-  //       </span>
-  //     </div>
-  //   )
-  // }
+  if (!onchainData) {
+    return (
+      <div className="flex h-[252px] flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
+        <LoadingSpinner />
+        <span className="text-sm font-[450] text-card-foreground">
+          Data currently loading...
+        </span>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -93,7 +94,7 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
         <Link
           target="_blank"
           rel="noreferrer"
-          href={txHash ? `https://testnet.snowtrace.io/tx/${txHash}` : '#'}
+          href={txHash ? `https://43114.testnet.snowtrace.io/tx/${txHash}` : '#'}
           className={cn(
             buttonVariants({ variant: 'link' }),
             'space-x-2 px-0 py-2',
