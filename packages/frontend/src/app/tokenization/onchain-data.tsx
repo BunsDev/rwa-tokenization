@@ -69,10 +69,11 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
 
   if (!onchainData) {
     return (
-      <div className="flex h-[252px] flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
+      <div className="flex h-[156px] w-full flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
         <LoadingSpinner />
         <span className="text-sm font-[450] text-card-foreground">
-          Data currently loading...
+          {/* Data currently loading... */}
+          Refresh Page
         </span>
       </div>
     )

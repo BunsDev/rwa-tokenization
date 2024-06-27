@@ -62,6 +62,7 @@ contract RealEstate is
     mapping(bytes32 => APIResponse) public requests;
     mapping(string => bytes32) public latestRequestId;
     mapping(string tokenId => string price) public latestPrice;
+    mapping(string tokenId => uint lastUpdate) public lastestUpdate;
 
     Houses[] public houseInfo;
 
@@ -193,8 +194,11 @@ contract RealEstate is
             string memory tokenId = requests[requestId].tokenId;
             uint index = requests[requestId].index;
 
-            // store: latest price for a given `requestId`.
+            // store: latest price for a given `tokenId`.
             latestPrice[tokenId] = string(response);
+            
+            // store: last update time for a given `tokenId`.
+            lastestUpdate[tokenId] = block.timestamp;
 
             // updates: houseInfo[tokenId]
             Houses storage house = houseInfo[index];

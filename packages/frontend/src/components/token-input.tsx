@@ -12,6 +12,9 @@ export const TokenInput = () => {
 
   const [inputValue, setInputValue] = useState('')
   
+  const maxValue = 3
+  const isValid = Number(inputValue) <= maxValue
+
   useEffect(() => {
     const tokenId = searchParams.get('tokenId')
 
@@ -39,7 +42,7 @@ export const TokenInput = () => {
         />
       </div>
       <Button
-        disabled={!inputValue}
+        disabled={!inputValue || !isValid}
         onClick={() => submit()}
         className="h-[46px] w-full bg-[#375BD2] py-3 text-xl font-medium leading-[26px] hover:bg-[#375BD2]/90 mb-2"
       >

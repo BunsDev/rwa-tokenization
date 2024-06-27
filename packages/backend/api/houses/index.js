@@ -24,12 +24,15 @@ async function getHouseInfo(ctx) {
 
     // time refactoring //
     const createTime = Number(houseInfo.createTime)
+    const latestUpdate = Number(RealEstate.methods.latestUpdate(tokenId).call())
     const nowTime = Math.floor(Number(Date.now()) / 1000)
-    const hoursPassed =  Math.floor((nowTime - createTime) / 3_600)
+    const hoursPassed = Math.floor((nowTime - createTime) / 3_600)
+    const hoursSinceLastRefresh = Math.floor((nowTime - latestUpdate) / 3_600)
+    const needsUpdate = hoursSinceLastRefresh > 1
 
     // pricing info //
     const listPrice = Number(houseInfo.listPrice)
-    const latestValue = Number(listPrice) + (Number(hoursPassed) * 10) // adds: $10 every minute to the list price.
+    const latestValue = needsUpdate ? Number(listPrice) + (Number(hoursPassed) * 10) : Number(listPrice) // adds: $10 every hour to the list price.
  
     // metadata //
     const homeAddress = houseInfo.homeAddress
@@ -42,7 +45,7 @@ async function getHouseInfo(ctx) {
             "latestValue": latestValue,
             "squareFootage": squareFootage,
             "hoursPassed": hoursPassed,
-            "needsUpdate": listPrice != latestValue
+            "needsUpdate": needsUpdate
         }
 }
 
