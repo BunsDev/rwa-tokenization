@@ -4,8 +4,7 @@
 // The code here has been slightly changed to escape
 // special characters in order to be displayed on the
 // web-page.
-export const CONTRACT_CODE = `
-// SPDX-License-Identifier: MIT
+export const CONTRACT_CODE = `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 import { FunctionsClient } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
 import { FunctionsRequest } from "@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
@@ -313,37 +312,37 @@ export const TABS = [
     label: 'Contracts Imports',
     content:
       'This is where we tell our smart contract that we want to use Chainlink Functions.',
-    highlightedLines: Array.from({ length: 11 }, (v, k) => 4 + k),
+    highlightedLines: Array.from({ length: 11 }, (v, k) => 3 + k),
   },
   {
     label: 'JavaScript Source',
     content:
       'This is where the JavaScript code that Chainlink Functions will execute is stored. By storing it on-chain, we have guarantees that this and only this code will be executed.',
-    highlightedLines: Array.from({ length: 11 }, (v, k) => 45 + k),
+    highlightedLines: Array.from({ length: 11 }, (v, k) => 44 + k),
   },
   {
     label: 'Subscription ID',
     content:
       'This is where the Chainlink Functions <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscription ID</a> is stored. This is required for your smart contract to use Chainlink Functions.',
-    highlightedLines: [58],
+    highlightedLines: [57],
   },
   {
     label: 'Functions Initialization',
     content:
       'In this contract\'s constructor, we set some Chainlink Functions specific configuration values such as the <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/supported-networks">DON ID</a>, Functions <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscription ID</a> and gas limit for the callback transaction.',
-    highlightedLines: Array.from({ length: 10 }, (v, k) => 75 + k),
+    highlightedLines: Array.from({ length: 10 }, (v, k) => 74 + k),
   },
   {
     label: 'Functions Request',
     content:
       'This is the function called by the UI when a new request is initiated. It sends the request to the Chainlink Functions DoN, along with all associated parameters, such as the JavaScript code to execute, subscription ID, gas limit for the callback transaction, and DoN ID of the Chainlink Functions network we wish to execute the code on.',
-    highlightedLines: Array.from({ length: 15 }, (v, k) => 127 + k),
+    highlightedLines: Array.from({ length: 15 }, (v, k) => 126 + k),
   },
   {
     label: 'Functions Response',
     content:
       'This is the function called by the Chainlink Functions DoN when it receives a response from the JavaScript code executed off-chain in the Chainlink Function.',
-    highlightedLines: Array.from({ length: 16 }, (v, k) => 202 + k),
+    highlightedLines: Array.from({ length: 16 }, (v, k) => 201 + k),
   },
 ]
 

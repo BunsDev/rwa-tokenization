@@ -82,7 +82,7 @@ export default async function HomePage({
                   <div className="flex h-[252px] flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
                     <LoadingSpinner />
                     <span className="text-sm font-[450] text-card-foreground">
-                      Data currently loading...
+                      Data loading...
                     </span>
                   </div>
                 }
@@ -114,7 +114,6 @@ export default async function HomePage({
               />
               <div className="mt-[-2px] grow border-l border-l-border" />
             </div>
-            {/* TODO Add OnChain Data */}
             <div>
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/onchain.svg" width={20} height={20} alt="globe" />
@@ -122,7 +121,6 @@ export default async function HomePage({
                   Onchain Data
                 </h3>
               </div>
-              {/* <OnchainData tokenId={tokenId} /> */}
               <OnchainResponse tokenId={tokenId} />
             </div>
           </>
