@@ -17,11 +17,9 @@ export const UpdateButton = async ({
   const offchainData = await fetchHouse(tokenId)
   const onchainData = await fetchOnChainHouse(tokenId)
 
-//   const rawData = JSON.stringify(houseData, null, 3)
-  const listPrice = getListPrice(offchainData)
-  const currentPrice = getCurrentPrice(onchainData)
+  const listPrice = getListPrice(onchainData)
+  const currentPrice = getCurrentPrice(offchainData)
   const needsUpdate = listPrice != currentPrice
-//   console.log('needsUpdate: %s', needsUpdate)
 
   return (
     <>
@@ -35,30 +33,4 @@ export const UpdateButton = async ({
       </Button>
     </>
   )
-      {/* <label className="text-base font-[450] text-card-foreground">
-        Raw Data
-      </label>
-      <ScrollArea
-        className={cn('mb-6 mt-2 h-[125px] rounded', firaCode.variable)}
-      >
-        <CodeBlock codeString={rawData} />
-      </ScrollArea>
-      <div className="flex justify-between space-x-4">
-        <div className="flex flex-col justify-end">
-          <label className="mb-2 text-base font-[450] text-card-foreground">
-           Lasted Value
-          </label>
-          <div className="rounded bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground">
-            {parsedData}
-          </div>
-        </div>
-        <div className="flex flex-col justify-end lg:grow">
-          <label className="mb-2 text-base font-[450] text-card-foreground">
-            Unit
-          </label>
-          <div className="rounded bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground">
-            {`$`}
-          </div>
-        </div>
-      </div> */}
 }

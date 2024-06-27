@@ -25,10 +25,10 @@ export const getHouseOnChain = async (requestId: string) => {
   }
 }
 
-export const requestHouseOnChain = async (userAddress: any) => {
+export const requestHouseOnChain = async (tokenId: any) => {
   const contract = getRealEstateContract()
-  const tx = await contract.issueHouse(
-    userAddress
+  const tx = await contract.requestLastPrice(
+    tokenId
   )
   const receipt = await tx.wait()
   const requestId = receipt?.logs[2].args[0] as string

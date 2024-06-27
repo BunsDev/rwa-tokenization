@@ -6,7 +6,6 @@ const API_URL = `https://api.chateau.voyage/house`
 
 const fetchRealEstateData = cache(
   async <T>(
-    // slug: string,
     tokenId: string, // URLSearchParams,
     revalidate = 60,
   ): Promise<T> => {
@@ -29,22 +28,22 @@ const fetchRealEstateData = cache(
 )
 
 export const fetchHouse = async (tokenId: string) => {
+  const onchainData = await fetchRealEstateData<HouseResponse>(
+    tokenId
+  )
+  return JSON.parse(`{
+    "id": "${onchainData.id}", 
+    "latestValue": "${onchainData?.latestValue}"
+    }`) as HouseResponse
+}
+  
+export const fetchOnChainHouse = async (tokenId: string) => {
   const data = await fetchRealEstateData<HouseResponse>(
     tokenId
   )
   return JSON.parse(`{
     "id": "${data.id}", 
     "listPrice": "${data?.listPrice}"
-  }`) as HouseResponse
-}
-
-export const fetchOnChainHouse = async (tokenId: string) => {
-  const onchainData = await fetchRealEstateData<HouseResponse>(
-    tokenId
-  )
-  return JSON.parse(`{
-       "id": "${onchainData.id}", 
-       "latestValue": "${onchainData?.latestValue}"
   }`) as HouseResponse
 }
 

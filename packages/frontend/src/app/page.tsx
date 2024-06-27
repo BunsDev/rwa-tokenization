@@ -73,7 +73,7 @@ export default async function HomePage({
               <div className="mb-7 flex items-center space-x-2">
                 <Image src="/code.svg" width={20} height={20} alt="globe" />
                 <h3 className="text-2xl font-medium tracking-[-0.24px]">
-                  Simulated Functions Response
+                  Simulated Response
                 </h3>
               </div>
               <Suspense
