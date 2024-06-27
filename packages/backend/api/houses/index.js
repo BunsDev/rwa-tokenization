@@ -27,7 +27,7 @@ async function getHouseInfo(ctx) {
     const latestUpdate = RealEstate.methods.latestUpdate(tokenId).call()
     const nowTime = Math.floor(Number(Date.now()) / 1000)
     const hoursPassed = Math.floor((nowTime - createTime) / 3_600)
-    const lastUpdated = latestUpdate == 0 ? createTime : latestUpdate
+    const lastUpdated = Number(latestUpdate) == 0 ? Number(createTime) : Number(latestUpdate)
  
     const hoursSinceLastRefresh = Math.floor((nowTime - lastUpdated) / 3_600)
     const needsUpdate = hoursSinceLastRefresh >= 1
