@@ -51,7 +51,7 @@ contract RealEstate is
     string private constant SOURCE_PRICE_INFO =
         "const id = args[0];"
         "const priceResponse = await Functions.makeHttpRequest({"
-        "url: \`https://api.chateau.voyage/house/$\{id}\`,"
+        "url: \`https://api.chateau.voyage/house/\${id}\`,"
         "});"
         "if (priceResponse.error) {"
         "throw Error('Housing Price Request Error');"
@@ -63,7 +63,6 @@ contract RealEstate is
     uint64 private subscriptionId; // Subscription ID for the Chainlink Functions
     uint32 private gasLimit; // Gas limit for the Chainlink Functions callbacks
     uint public epoch; // Time interval for price updates.
-
     uint private _totalHouses;
 
     // Mapping of request IDs to API response info
@@ -101,7 +100,7 @@ contract RealEstate is
         uint index = _totalHouses;
         string memory tokenId = string(abi.encode(index));
 
-        // increases: _totalHouses.
+        // increase: _totalHouses.
         _totalHouses++;
 
         // create: instance of a House.
@@ -112,7 +111,7 @@ contract RealEstate is
             listPrice: listPrice,
             squareFootage: squareFootage,
             createTime: block.timestamp,
-            lastTime: block.timestamp
+            lastUpdate: block.timestamp
         }));
 
         setURI(
@@ -132,6 +131,13 @@ contract RealEstate is
     function requestLastPrice(string calldata tokenId, uint index) external {
         string[] memory args = new string[](1);
         args[0] = tokenId;
+
+        // gets: houseInfo[tokenId]
+        Houses storage house = houseInfo[index];
+
+        // ensures: price update is not too soon (i.e. not until a full epoch elapsed).
+        require(block.timestamp - house.lastUpdate >= epoch, "RealEstate: Price update too soon");
+
         bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
         // maps: \`tokenId\` associated with a given \`requestId\`.
         requests[requestId].tokenId = tokenId;
@@ -209,9 +215,6 @@ contract RealEstate is
 
         // gets: houseInfo[tokenId]
         Houses storage house = houseInfo[index];
-        
-        // ensures: price update is not too soon (i.e. not until a full epoch elapsed).
-        require(block.timestamp - house.lastUpdate >= epoch, "RealEstate: Price update too soon");
 
         // updates: listPrice for a given \`tokenId\`.
         house.listPrice = string(response);

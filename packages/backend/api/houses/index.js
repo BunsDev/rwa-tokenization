@@ -25,10 +25,9 @@ async function getHouseInfo(ctx) {
     const createTime = Number(houseInfo.createTime)
     const lastUpdate = Number(houseInfo.lastUpdate)
     const nowTime = Math.floor(Number(Date.now()) / 1_000)
-    const epoch = RealEstate.methods.epoch().call()
-    const epochs = Math.floor((nowTime - createTime) / Number(epoch))
-    const hoursSinceLastRefresh = Math.floor((nowTime - lastUpdate) / epoch)
-    const needsUpdate = hoursSinceLastRefresh >= 1
+    const epoch = Number(await RealEstate.methods.epoch().call())
+    const epochs = Math.floor((nowTime - lastUpdate) / Number(epoch))
+    const needsUpdate = epochs >= 1
 
     // pricing info //
     const listPrice = Number(houseInfo.listPrice)
@@ -44,9 +43,10 @@ async function getHouseInfo(ctx) {
             "homeAddress": homeAddress,
             "latestValue": latestValue,
             "squareFootage": squareFootage,
+            "createTime": createTime,
+            "lastUpdate": lastUpdate,
             "epoch": epoch,
             "epochs": epochs,
-            "hoursSinceLastRefresh": hoursSinceLastRefresh,
             "needsUpdate": needsUpdate
         }
 }
