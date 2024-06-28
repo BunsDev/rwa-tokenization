@@ -25,8 +25,8 @@ async function getHouseInfo(ctx) {
     const createTime = Number(houseInfo.createTime)
     const lastUpdate = Number(houseInfo.lastUpdate)
     const nowTime = Math.floor(Number(Date.now()) / 1_000)
-    const epoch = Number(RealEstate.methods.epoch().call())
-    const epochs = Math.floor((nowTime - createTime) / epoch)
+    const epoch = RealEstate.methods.epoch().call()
+    const epochs = Math.floor((nowTime - createTime) / Number(epoch))
     const hoursSinceLastRefresh = Math.floor((nowTime - lastUpdate) / epoch)
     const needsUpdate = hoursSinceLastRefresh >= 1
 
@@ -44,6 +44,7 @@ async function getHouseInfo(ctx) {
             "homeAddress": homeAddress,
             "latestValue": latestValue,
             "squareFootage": squareFootage,
+            "epoch": epoch,
             "epochs": epochs,
             "hoursSinceLastRefresh": hoursSinceLastRefresh,
             "needsUpdate": needsUpdate

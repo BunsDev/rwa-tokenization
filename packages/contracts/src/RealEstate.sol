@@ -125,6 +125,13 @@ contract RealEstate is
     function requestLastPrice(string calldata tokenId, uint index) external {
         string[] memory args = new string[](1);
         args[0] = tokenId;
+
+        // gets: houseInfo[tokenId]
+        Houses storage house = houseInfo[index];
+
+        // ensures: price update is not too soon (i.e. not until a full epoch elapsed).
+        require(block.timestamp - house.lastUpdate >= epoch, "RealEstate: Price update too soon");
+
         bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
         // maps: `tokenId` associated with a given `requestId`.
         requests[requestId].tokenId = tokenId;
@@ -202,9 +209,6 @@ contract RealEstate is
 
         // gets: houseInfo[tokenId]
         Houses storage house = houseInfo[index];
-        
-        // ensures: price update is not too soon (i.e. not until a full epoch elapsed).
-        require(block.timestamp - house.lastUpdate >= epoch, "RealEstate: Price update too soon");
 
         // updates: listPrice for a given `tokenId`.
         house.listPrice = string(response);
