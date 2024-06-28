@@ -44,6 +44,7 @@ contract RealEstate is
         string listPrice; 
         string squareFootage;
         uint createTime;
+        uint lastUpdate;
     }
 
     // Chainlink Functions script source code.
@@ -61,6 +62,7 @@ contract RealEstate is
     bytes32 public donId; // DON ID for the Functions DON to which the requests are sent
     uint64 private subscriptionId; // Subscription ID for the Chainlink Functions
     uint32 private gasLimit; // Gas limit for the Chainlink Functions callbacks
+    uint public epoch; // Time interval for price updates.
 
     uint private _totalHouses;
 
@@ -68,7 +70,6 @@ contract RealEstate is
     mapping(bytes32 => APIResponse) public requests;
     mapping(string => bytes32) public latestRequestId;
     mapping(string tokenId => string price) public latestPrice;
-    mapping(string tokenId => uint lastUpdate) public latestUpdate;
 
     Houses[] public houseInfo;
 
@@ -86,6 +87,7 @@ contract RealEstate is
         donId = _donId;
         subscriptionId = _subscriptionId;
         gasLimit = _gasLimit;
+        epoch = 1 days / 21_600; // 15min. interval
     }
 
     /**
@@ -100,17 +102,18 @@ contract RealEstate is
         uint index = _totalHouses;
         string memory tokenId = string(abi.encode(index));
 
-        // increase totalHouses.
+        // increases: _totalHouses.
         _totalHouses++;
 
-        // [then] create: instance of a House.
+        // create: instance of a House.
        houseInfo.push(Houses({
             tokenId: tokenId,
             recipientAddress: recipientAddress,
             homeAddress: homeAddress,
             listPrice: listPrice,
             squareFootage: squareFootage,
-            createTime: block.timestamp
+            createTime: block.timestamp,
+            lastTime: block.timestamp
         }));
 
         setURI(
@@ -133,6 +136,7 @@ contract RealEstate is
         bytes32 requestId = _sendRequest(SOURCE_PRICE_INFO, args);
         // maps: \`tokenId\` associated with a given \`requestId\`.
         requests[requestId].tokenId = tokenId;
+        // maps: \`index\` associated with a given \`requestId\`.
         requests[requestId].index = index;
 
         latestRequestId[tokenId] = requestId;
@@ -196,21 +200,26 @@ contract RealEstate is
         bytes32 requestId,
         bytes memory response
     ) private {
-            requests[requestId].response = string(response);
-            string memory tokenId = requests[requestId].tokenId;
-            uint index = requests[requestId].index;
+        requests[requestId].response = string(response);
 
-            // store: latest price for a given \`tokenId\`.
-            latestPrice[tokenId] = string(response);
-            
-            // store: last update time for a given \`tokenId\`.
-            latestUpdate[tokenId] = block.timestamp;
+        uint index = requests[requestId].index;
+        string memory tokenId = requests[requestId].tokenId;
 
-            // updates: houseInfo[tokenId]
-            Houses storage house = houseInfo[index];
-            house.listPrice = string(response);
+        // store: latest price for a given \`tokenId\`.
+        latestPrice[tokenId] = string(response);
 
-            emit LastPriceReceived(requestId, string(response));
+        // gets: houseInfo[tokenId]
+        Houses storage house = houseInfo[index];
+        
+        // ensures: price update is not too soon (i.e. not until a full epoch elapsed).
+        require(block.timestamp - house.lastUpdate >= epoch, "RealEstate: Price update too soon");
+
+        // updates: listPrice for a given \`tokenId\`.
+        house.listPrice = string(response);
+        // updates: lastUpdate for a given \`tokenId\`.
+        house.lastUpdate = block.timestamp;
+
+        emit LastPriceReceived(requestId, string(response));
     }
 
     // CHAINLINK FUNCTIONS //
@@ -277,6 +286,13 @@ contract RealEstate is
 
     function totalHouses() public view returns (uint) {
         return _totalHouses;
+    }
+
+    // OWNER SETTING //
+
+    // prevents excessive calls from UI.
+    function setEpoch(uint _epoch) external onlyOwner {
+        epoch = _epoch;
     }
 }`
 
