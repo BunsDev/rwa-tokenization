@@ -309,31 +309,31 @@ export const TABS = [
         label: 'JavaScript Source',
         content:
             'JavaScript Chainlink Functions will execute. Storing on-chain guarantees only this code will be executed.',
-        highlightedLines: Array.from({ length: 10 }, (v, k) => 44 + k),
+        highlightedLines: Array.from({ length: 10 }, (v, k) => 45 + k),
     },
     {
         label: 'Subscription ID',
         content:
             'Chainlink Functions <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscription ID</a> is required for your smart contract to use Chainlink Functions.',
-        highlightedLines: [56],
+        highlightedLines: [57],
     },
     {
         label: 'Functions Initialization',
         content:
             'We set some Functions-specific configuration values in the contructor, such as the <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/supported-networks">donId</a>, <a class="explainer-link" href="https://docs.chain.link/chainlink-functions/resources/subscriptions">subscriptionId</a>, and gasLimit for the callback transaction.',
-        highlightedLines: Array.from({ length: 10 }, (v, k) => 73 + k),
+        highlightedLines: Array.from({ length: 10 }, (v, k) => 74 + k),
     },
     {
         label: 'Functions Request',
         content:
             'This is called by the UI when a new request is initiated. It sends the request to the Chainlink Functions DoN, along with the tokenId and index of the tokenized asset that requires a price update.',
-        highlightedLines: Array.from({ length: 12 }, (v, k) => 123 + k),
+        highlightedLines: Array.from({ length: 20 }, (v, k) => 125 + k),
     },
     {
         label: 'Functions Response',
         content:
             'This is the function called by the Chainlink Functions DoN when it receives a response from the JavaScript code executed off-chain in the Chainlink Function.',
-        highlightedLines: Array.from({ length: 17 }, (v, k) => 188 + k),
+        highlightedLines: Array.from({ length: 22 }, (v, k) => 198 + k),
     },
 ]
 

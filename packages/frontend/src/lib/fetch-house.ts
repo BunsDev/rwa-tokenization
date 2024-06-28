@@ -37,7 +37,7 @@ export const fetchHouse = async (tokenId: string) => {
     "latestValue": "${onchainData?.latestValue}"
     }`) as HouseResponse
 }
-  
+
 export const fetchOnChainHouse = async (tokenId: string) => {
   const data = await fetchRealEstateData<HouseResponse>(
     tokenId
@@ -72,23 +72,3 @@ export const getSquareFootage = (houseReponse: HouseResponse) => {
   const squareFootage = houseReponse?.squareFootage ?? '0'
   return squareFootage
 }
-
-function convertStringToJson(text: string) {
-  try {
-    const jsonObject = JSON.parse(text);
-    return jsonObject;
-  } catch (error) {
-    console.error('Error parsing JSON:', error);
-    return null; // or handle the error as needed
-  }
-}
-
-// Example usage:
-// const jsonString = '{"name": "John", "age": 30, "city": "New York"}';
-// const jsonObject = convertStringToJson(jsonString);
-
-// if (jsonObject !== null) {
-//     console.log('Parsed JSON object:', jsonObject);
-// } else {
-//     console.log('Failed to parse JSON.');
-// }

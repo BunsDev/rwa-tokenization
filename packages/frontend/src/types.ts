@@ -13,8 +13,6 @@ export type HouseResponse = {
   listPrice: string
   latestValue: string
   squareFootage: string
-  bedRooms: string
-  bathRooms: string
   needsUpdate: string
 }
 
