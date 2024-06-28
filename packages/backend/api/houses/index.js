@@ -16,7 +16,6 @@ async function getInfo() {
 }
 
 
-// todo: make this into information that is stored on the blockchain
 async function getHouseInfo(ctx) {
     const id = Number(ctx.params.id)
     const tokenId = id.toString()
@@ -24,15 +23,16 @@ async function getHouseInfo(ctx) {
 
     // time refactoring //
     const createTime = Number(houseInfo.createTime)
-    const latestUpdate = Number(RealEstate.methods.latestUpdate(tokenId).call())
-    const nowTime = Math.floor(Number(Date.now()) / 1000)
-    const hoursPassed = Math.floor((nowTime - createTime) / 3_600)
-    const hoursSinceLastRefresh = Math.floor((nowTime - latestUpdate) / 3_600)
+    const lastUpdate = Number(houseInfo.lastUpdate)
+    const nowTime = Math.floor(Number(Date.now()) / 1_000)
+    const epoch = Number(RealEstate.methods.epoch().call())
+    const epochs = Math.floor((nowTime - createTime) / epoch)
+    const hoursSinceLastRefresh = Math.floor((nowTime - lastUpdate) / epoch)
     const needsUpdate = hoursSinceLastRefresh >= 1
 
     // pricing info //
     const listPrice = Number(houseInfo.listPrice)
-    const latestValue = needsUpdate ? Number(listPrice) + (Number(hoursPassed) * 10) : Number(listPrice) // adds: $10 every hour to the list price.
+    const latestValue = needsUpdate ? Number(listPrice) + (Number(epochs) * 10) : Number(listPrice) // adds: $10 every epoch to the list price.
  
     // metadata //
     const homeAddress = houseInfo.homeAddress
@@ -44,7 +44,7 @@ async function getHouseInfo(ctx) {
             "homeAddress": homeAddress,
             "latestValue": latestValue,
             "squareFootage": squareFootage,
-            "hoursPassed": hoursPassed,
+            "epochs": epochs,
             "hoursSinceLastRefresh": hoursSinceLastRefresh,
             "needsUpdate": needsUpdate
         }

@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS_REAL_ESTATE = '0x548594a083785556996E5eCA48fB2b9E1083e38E'
+export const CONTRACT_ADDRESS_REAL_ESTATE = '0x591D9d8539B29a6339c6d47799C47F62ec87A0A0'
 
 // Warning: Do not copy/paste this code.
 // Please refer to the supplied example code in the repository instead.
@@ -418,6 +418,19 @@ export const realEstateABI = [
     },
     {
         "type": "function",
+        "name": "epoch",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
         "name": "getApproved",
         "inputs": [
             {
@@ -496,6 +509,11 @@ export const realEstateABI = [
             },
             {
                 "name": "createTime",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "lastUpdate",
                 "type": "uint256",
                 "internalType": "uint256"
             }
@@ -748,6 +766,19 @@ export const realEstateABI = [
                 "name": "approved",
                 "type": "bool",
                 "internalType": "bool"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setEpoch",
+        "inputs": [
+            {
+                "name": "_epoch",
+                "type": "uint256",
+                "internalType": "uint256"
             }
         ],
         "outputs": [],

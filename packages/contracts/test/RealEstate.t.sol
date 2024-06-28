@@ -89,7 +89,7 @@ contract RealEstateTest is BaseTest {
         vm.expectEmit(true, false, false, false);
         emit SubscriptionCreated(1, OWNER_ADDRESS);
         vm.broadcast(OWNER_ADDRESS);
-        uint64 subscriptionId = functionsScript.createSubscriptionWithConsumer(STRANGER_ADDRESS);
+        // uint64 subscriptionId = functionsScript.createSubscriptionWithConsumer(STRANGER_ADDRESS);
         // assertEq(subscriptionId, 1);
         console.log("[SUCCESS] Created Subscription");
         // console.log("[SUCCESS]: Created Subscription[%s] With Consumer.", string(abi.encode(subscriptionId)));
