@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS_REAL_ESTATE = '0x591D9d8539B29a6339c6d47799C47F62ec87A0A0'
+export const CONTRACT_ADDRESS_REAL_ESTATE = '0x29660e79478a91A3F8c61B164CF5950B0182f8c2'
 
 // Warning: Do not copy/paste this code.
 // Please refer to the supplied example code in the repository instead.
@@ -87,7 +87,6 @@ contract RealEstate is
         donId = _donId;
         subscriptionId = _subscriptionId;
         gasLimit = _gasLimit;
-        epoch = 1 days / 21_600; // 15min. interval
     }
 
     /**
