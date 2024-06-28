@@ -80,7 +80,6 @@ contract RealEstate is
         donId = _donId;
         subscriptionId = _subscriptionId;
         gasLimit = _gasLimit;
-        epoch = 1 days / 21_600; // 15min. interval
     }
 
     /**
