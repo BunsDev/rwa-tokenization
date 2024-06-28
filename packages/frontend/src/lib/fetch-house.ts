@@ -7,16 +7,17 @@ const API_URL = `https://api.chateau.voyage/house`
 const fetchRealEstateData = cache(
   async <T>(
     tokenId: string = '0', // URLSearchParams,
-    revalidate = 60,
+    // revalidate = 10,
   ): Promise<T> => {
     const response = await fetch(
       `${API_URL}/${tokenId.toString()}`,
       {
         headers: {
         },
-        next: {
-          revalidate,
-        },
+        // next: {
+        //   revalidate,
+        // },
+        cache: 'no-store',
       },
     )
     if (response.status !== 200) {

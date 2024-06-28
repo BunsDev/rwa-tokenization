@@ -38,7 +38,7 @@ export const OnchainResponse = async ({
           <label className="flex justify-center py-2 text-base font-[550] text-card-foreground">
            Stored Price
           </label>
-          <div className={`flex rounded border-2 ${needsUpdate && `border-[#FF3131]`} bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground justify-center`}>
+          <div className={`flex rounded border-2 ${needsUpdate ? `border-[#FF3131]` : `border-[#39FF14]`} bg-[#181D29] px-4 py-3 text-sm leading-4 text-muted-foreground justify-center`}>
             {Number(listPrice).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })}
           </div>
         </div>
