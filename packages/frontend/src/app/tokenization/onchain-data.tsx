@@ -9,6 +9,7 @@ import CodeBlock from '@/components/code-block'
 import LoadingSpinner from '@/components/loading-spinner'
 import { cn } from '@/lib/utils'
 import { firaCode } from '@/lib/fonts'
+import useWait from '@/hooks/useWait'
 
 type OnchainDataProps = {
   tokenId: string
@@ -32,7 +33,7 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
         return
       }
       setTxHash(result.txHash)
-      // console.log(result.txHash)
+      console.log('txHash: %s', result.txHash)
       setRequestId(result.requestId)
     }
     requestOnChainPrice()
@@ -48,7 +49,7 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
         clearInterval(interval)
         setOnchainData(result.text)
       }
-    }, 1000)
+    }, 1_000)
   }, [requestId])
 
   if (error) {
@@ -72,8 +73,7 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
       <div className="flex h-[156px] w-full flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
         <LoadingSpinner />
         <span className="text-sm font-[450] text-card-foreground">
-          {/* Data currently loading... */}
-          Refresh Page
+          {useWait('Wait for transaction...', 'Refresh', 12_000)}
         </span>
       </div>
     )
@@ -84,7 +84,7 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
       className={`bg-[#181D29]`}
     >
       <label className="text-base font-[450] text-card-foreground">
-        What is in the smart contract
+        What is in the smart contract?
       </label>
       <ScrollArea
         className={cn('mb-3 mt-2 h-[173px] rounded', firaCode.variable)}

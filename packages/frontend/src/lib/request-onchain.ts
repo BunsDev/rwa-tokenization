@@ -14,6 +14,18 @@ export const getRealEstateContract = () => {
   return contract
 }
 
+export const getLatestRequestId = async (tokenId: string) => {
+  const contract = getRealEstateContract()
+  const requestId = await contract.latestRequestId(tokenId)
+  console.log('getLatestRequestId: requestId: %s', requestId)
+
+  if (!requestId) return
+
+  return {
+   requestId: requestId.toString()
+  }
+}
+
 export const getHouseOnChain = async (requestId: string) => {
   const contract = getRealEstateContract()
   const result = await contract.requests(requestId)
@@ -36,12 +48,12 @@ export const requestHouseOnChain = async (tokenId: any) => {
     tokenId
   )
   const receipt = await tx.wait()
-  console.log(receipt)
+  console.log('requestHouseOnChain receipt:', receipt)
   
   const requestId = receipt?.logs[2].args[0] as string
-  console.log(requestId)
+  console.log('requestHouseOnChain requestId: ', requestId)
   return { 
-    tx: tx, 
+    tx: receipt, 
     requestId: requestId 
   }
 }
