@@ -9,7 +9,7 @@ import CodeBlock from '@/components/code-block'
 import LoadingSpinner from '@/components/loading-spinner'
 import { cn } from '@/lib/utils'
 import { firaCode } from '@/lib/fonts'
-import useWait from '@/hooks/useWait'
+// import useWait from '@/hooks/useWait'
 
 type OnchainDataProps = {
   tokenId: string
@@ -73,7 +73,8 @@ export const OnchainData = ({ tokenId }: OnchainDataProps) => {
       <div className="flex h-[156px] w-full flex-col items-center justify-center space-y-2 rounded bg-[#181D29]">
         <LoadingSpinner />
         <span className="text-sm font-[450] text-card-foreground">
-          {useWait('Wait for transaction...', 'Refresh', 12_000)}
+          {/* {useWait('Wait for transaction...', 'Refresh', 12_000)} */}
+          {'Refresh in 12 seconds...'}
         </span>
       </div>
     )

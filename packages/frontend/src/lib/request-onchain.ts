@@ -30,7 +30,6 @@ export const getHouseOnChain = async (requestId: string) => {
   const contract = getRealEstateContract()
   const result = await contract.requests(requestId)
   // console.log(result)
-  
 
   if (!result.index || !result.tokenId || !result.response) return
 
