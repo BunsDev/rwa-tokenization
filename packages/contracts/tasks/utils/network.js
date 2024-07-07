@@ -4,7 +4,7 @@ const BASE_URLS = {
   43114: "https://snowtrace.io/",
   80001: "https://mumbai.polygonscan.com/",
   11155111: "https://sepolia.etherscan.io/",
-  43113: "https://testnet.snowtrace.io/",
+  43113: "https://43113.testnet.snowtrace.io/",
   421614: "https://sepolia.arbiscan.io/",
   42161: "https://arbiscan.io/",
   84532: "https://sepolia.basescan.org/",
