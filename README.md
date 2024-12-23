@@ -1,4 +1,4 @@
-# Real World Asset (RWA) Tokenization (WIP)
+# Real World Asset (RWA) Tokenization
 > Asset tokenization using Chainlink Functions on Avalanche.
 
 ----
